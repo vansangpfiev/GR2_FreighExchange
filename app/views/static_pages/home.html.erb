@@ -1,0 +1,28 @@
+<div class="container-fluid " id="app-area">
+  <br>
+  <section class="row">
+    <section class="col-md-8">
+      <section class="row">
+        <div class="col-md-2 app-icon" >
+          <%= link_to image_tag("img_delivery.png", id: "newgame-img") %>          
+        </div>
+        <div class="col-md-2 app-icon" >
+          <%= link_to image_tag("img_payment.png", id: "newgame-img") %>      
+        </div>
+        <div class="col-md-2 app-icon" >
+          <%= link_to image_tag("img_satellite.png", id: "newgame-img") %>
+        </div>
+        <div class="col-md-2 app-icon" >
+          <%= link_to image_tag("img_application.png", id: "newgame-img") %>          
+        </div>
+      </section>
+    </section>
+    <section class="col-md-4">       
+      <div class="col-md-2" >
+        <%= month_calendar do |date| %>          
+          <%= date.day %>
+        <% end %>
+      </div>
+    </section>
+  </section>
+</div>
