@@ -1,5 +1,4 @@
 class Supplier::ProfileController < Supplier::BaseController
-  def index
-    
+  def index    
   end
 end

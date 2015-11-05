@@ -4,21 +4,41 @@
     <section class="col-md-8">
       <section class="row">
         <div class="col-md-2 app-icon" >
-          <%= link_to image_tag("img_delivery.png", id: "newgame-img") %>          
+          <div class="app-icon-img">
+            <%= link_to image_tag("img_delivery.png", id: "newgame-img") %>
+          </div>
+          <div class="app-icon-title">
+            <p>Delivery</p>
+          </div>
         </div>
         <div class="col-md-2 app-icon" >
-          <%= link_to image_tag("img_payment.png", id: "newgame-img") %>      
+          <div class="app-icon-img">
+            <%= link_to image_tag("img_payment.png", id: "newgame-img") %>
+          </div>
+          <div class="app-icon-title">
+            <p>Payment</p>
+          </div>
         </div>
         <div class="col-md-2 app-icon" >
-          <%= link_to image_tag("img_satellite.png", id: "newgame-img") %>
+          <div class="app-icon-img">
+            <%= link_to image_tag("img_satellite.png", id: "newgame-img") %>
+          </div>
+          <div class="app-icon-title">
+            <p>Tracking</p>
+          </div>
         </div>
         <div class="col-md-2 app-icon" >
-          <%= link_to image_tag("img_application.png", id: "newgame-img") %>          
+          <div class="app-icon-img">
+            <%= link_to image_tag("img_application.png", id: "newgame-img") %>
+          </div>
+          <div class="app-icon-title">
+            <p>More...</p>
+          </div>
         </div>
       </section>
     </section>
-    <section class="col-md-4">       
-      <div class="col-md-2" >
+    <section class="col-md-4" id="charm-panel">       
+      <div class="col-md-2">
         <%= month_calendar do |date| %>          
           <%= date.day %>
         <% end %>
