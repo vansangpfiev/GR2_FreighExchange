@@ -10,4 +10,8 @@ Rails.application.routes.draw do
   namespace :admin do
     get "home" => "home#index"
   end
+
+  namespace :customer do
+    resources :requests
+  end
 end

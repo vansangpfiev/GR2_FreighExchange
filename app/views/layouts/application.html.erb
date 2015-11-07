@@ -48,8 +48,17 @@
     </div>
     <!-- /.container -->
   </nav>
-
-  <%= yield %>
+  
+  <div class="container" id="app-area">
+    <div class="row">
+      <% flash.each do |message_type, message|%>
+      <div class="alert alert-<%=message_type%>">
+        <%= message %>
+      </div>
+      <% end %>
+    </div>
+    <%= yield %>
+  </div>
 
 </body>
 </html>

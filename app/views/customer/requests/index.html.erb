@@ -1,0 +1,31 @@
+<div class="row">
+  <h3>View all requests</h3>
+</div>
+
+<div class="row">
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Date create</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @requests.each do |request| %>
+    <tr>
+      <td><%= request.id %></td>
+      <td>request.date_create</td>
+      <td>Ha Noi</td>
+      <td>Ho Chi Minh</td>
+      <td>
+        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="glyphicon glyphicon-trash"></span>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

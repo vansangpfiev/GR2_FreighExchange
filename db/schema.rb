@@ -28,9 +28,9 @@ ActiveRecord::Schema.define(version: 20151105025317) do
     t.string  "name",     limit: 60
     t.string  "address",  limit: 60
     t.string  "postcode", limit: 10
-    t.integer "tel",      limit: 8
     t.string  "email",    limit: 60
-    t.integer "u_id"
+    t.integer "user_id"
+    t.string  "tel",      limit: 20
   end
 
 # Could not dump table "location" because of following StandardError
@@ -42,18 +42,18 @@ ActiveRecord::Schema.define(version: 20151105025317) do
   end
 
   create_table "request", primary_key: "request_id", force: :cascade do |t|
-    t.integer "cus_id"
+    t.integer "customer_id"
     t.float   "weight"
     t.integer "goods_type",        limit: 2
     t.float   "height"
     t.float   "length"
     t.float   "capacity"
-    t.time    "time"
     t.string  "other_description", limit: 60
     t.integer "start_point",       limit: 8
     t.integer "end_point",         limit: 8
     t.string  "status",            limit: 15
     t.integer "category_id"
+    t.date    "time"
   end
 
   create_table "schedule", primary_key: "schedule_id", force: :cascade do |t|
@@ -120,7 +120,7 @@ ActiveRecord::Schema.define(version: 20151105025317) do
   add_foreign_key "abstract_trip", "location", column: "end_point", primary_key: "location_id", name: "abstract_trip_end_point_fkey"
   add_foreign_key "abstract_trip", "location", column: "start_point", primary_key: "location_id", name: "abstract_trip_start_point_fkey"
   add_foreign_key "abstract_trip", "vehicle_category", column: "category_id", primary_key: "category_id", name: "abstract_trip_category_id_fkey"
-  add_foreign_key "request", "customer", column: "cus_id", primary_key: "customer_id", name: "request_cus_id_fkey"
+  add_foreign_key "request", "customer", primary_key: "customer_id", name: "request_cus_id_fkey"
   add_foreign_key "schedule", "request", primary_key: "request_id", name: "schedule_request_id_fkey"
   add_foreign_key "trip", "schedule", primary_key: "schedule_id", name: "trip_schedule_id_fkey"
   add_foreign_key "trip", "vehicle", primary_key: "vehicle_id", name: "trip_vehicle_id_fkey"
