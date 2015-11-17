@@ -1,10 +1,5 @@
-/*!
- * Start Bootstrap - Shop Item HTML Template (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
-
- #app-area {
+// Home app
+#app-area {
   padding-top: 70px;  
 }
 
@@ -27,9 +22,31 @@
   color: #000306;
   text-shadow: rgba(0, 0, 0, 0.247059) 0px 7px 15px;
 }
-
+// customer/requests
 .form-area{
   background-color: #F6F7ED;
   padding: 10px;
   border-radius: 5px;
+}
+//Authentication
+#float-panel{
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  margin: auto;
+  width: 300px;
+  height: 300px;
+
+  background: #f0f0fd;
+  background: rgba(240,240,253,0.90);
+  padding: 22px 20px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  -moz-box-shadow: 0 0 18px rgba(0, 0, 0, 0.9);
+  -webkit-box-shadow: 0 0 18px rgba(0, 0, 0, 0.9);
+  -box-shadow: 0 0 18px rgba(0, 0, 0, 0.9);
+}
+
+#app-area-devise{
+  background-image: url(asset-path('img_satellite.png'));
 }

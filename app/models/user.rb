@@ -3,5 +3,12 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :trackable, :validatable
-  has_one :customer
+  
+  def get_detailed_info
+    if self.role == "customer"
+      Customer.find_by user_id: self.id
+    elsif self.role == "provider"
+      Provider.find_by user_id: self.id
+    end
+  end
 end

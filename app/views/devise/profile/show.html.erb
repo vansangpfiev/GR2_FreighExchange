@@ -3,7 +3,7 @@
     <div class="col-md-4">
       <div>
         <ul class="list-group">
-        <li class="list-group-item">Cras justo odio</li>
+        <li class="list-group-item">Account infomation</li>
         <li class="list-group-item">Dapibus ac facilisis in</li>
         <li class="list-group-item">Morbi leo risus</li>
         <li class="list-group-item">Porta ac consectetur ac</li>
@@ -20,13 +20,13 @@
           <div class="panel-body">
             <div class="">
               <div class="">
-                <span>AccountID:</span><span>018283372</span>
+                <span>AccountID:&nbsp</span><span><strong><%= @user.id %></strong></span>
               </div>
               <div>
-                <span>AccountName:</span><span>Pham Duc Minh</span>
+                <span>AccountName:&nbsp</span><span><strong><%= @user.get_detailed_info.name %></strong></span>
               </div>
               <div>
-                <span>Password:</span><span>*******</span>
+                <span>Password:&nbsp</span><span><strong>*******</strong></span>
               </div>
               <button class="btn btn-default" >Edit</button>
             </div>
@@ -41,22 +41,22 @@
           <div class="panel-body">
             <div class="">
               <div class="">
-                <span>Full Name</span><span>Pham Duc Minh</span>
+                <span>Full Name:&nbsp</span><span><strong><%= @user.get_detailed_info.name %></strong></span>
               </div>
               <div>
-                <span>Address:</span><span>Hoan Kiem</span>
+                <span>Address:&nbsp</span><span><strong><%= @user.get_detailed_info.address %></strong></span>
               </div>
               <div>
-                <span>City:</span><span>Ha Noi</span>
+                <span>City:&nbsp</span><span><strong>Ha Noi</strong></span>
               </div>
               <div>
-                <span>State:</span><span>Viet Nam</span>
+                <span>State:&nbsp</span><span><strong>Viet Nam</strong></span>
               </div>
               <div>
-                <span>Phone Number:</span><span>+846537736</span>
+                <span>Phone Number:&nbsp</span><span><strong><%= @user.get_detailed_info.tel %></strong></span>
               </div>
               <div>
-                <span>Company Name</span><span>CC Colt</span>
+                <span>Company Name:&nbsp</span><span><strong>Sample company</strong></span>
               </div>
               <button class="btn btn-default" >Edit</button>
             </div>
@@ -66,18 +66,18 @@
       <div class="row">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Account Setting</h3>
+            <h3 class="panel-title">Payment</h3>
           </div>
           <div class="panel-body">
             <div class="">
               <div class="">
-                <span>Card Number</span><span>************372</span>
+                <span>Card Number:&nbsp</span><span><strong>************372</strong></span>
               </div>
               <div>
-                <span>Owner:</span><span>Pham Duc Minh</span>
+                <span>Owner:&nbsp</span><span><strong>Pham Duc Minh</strong></span>
               </div>
               <div>
-                <span>Type:</span><span>Visa</span>
+                <span>Type:&nbsp</span><span><strong>Visa Debit</strong></span>
               </div>
               <button class="btn btn-default" >Edit</button>
             </div>
