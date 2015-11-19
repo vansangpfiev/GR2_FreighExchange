@@ -9,70 +9,36 @@
 <body>
   <!-- Navigation -->
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse"
-        data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span> <span
-        class="icon-bar"></span> <span class="icon-bar"></span> 
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <%= link_to image_tag("img_home.png", id: "newgame-img"), root_path, class: "navbar-brand" %>
+      <%= link_to image_tag("img_home.png"), root_path, class: "navbar-brand" %>
     </div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse"
-      id="bs-example-navbar-collapse-1">
-      <li>
-        <ul class="nav navbar-nav">
-          <li>
-            <% if !@breadcrumb.nil? %>
-              <% @breadcrumb.each do |item| %>
-                <%= item %><span class="glyphicon glyphicon-menu-right"></span>
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-
-        <ul class="nav navbar-nav navbar-right">
-          <% if user_signed_in? %>
-            <li><%= link_to image_tag("img_user.png", id: "newgame-img") %></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-              aria-expanded="false">
-                Hi!&nbsp<%= current_user.email %>
-              <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Mail box</a></li>
-                <li><%= link_to "Logout", destroy_user_session_path, method: :delete %></li>
-                <li><%= link_to "Account setting", customer_profile_path %></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
-              </ul>
-            </li>
-          <% else %>
-            <li>
-              <%= link_to "Login", new_user_session_path %>
-            </li>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">        
+        <% if !@breadcrumb.nil? %>
+          <% @breadcrumb.each do |item| %>
+            <li><a><%= item %><span class="glyphicon glyphicon-menu-right"></span></a></li>
           <% end %>
-        </ul>
-      </li>
+        <% end %>
+      </ul>
     </div>
-<!-- /.navbar-collapse -->
-</div>
-<!-- /.container -->
-</nav>
+  </nav>
 
-<div class="container" id="app-area">
-  <div class="row">
-    <% flash.each do |message_type, message|%>
-    <div class="alert alert-<%=message_type%>">
-      <%= message %>
+  <div class="container" id="app-area">
+    <div class="row">
+      <% flash.each do |message_type, message|%>
+      <div class="alert alert-<%=message_type%>">
+        <%= message %>
+      </div>
+      <% end %>
     </div>
-    <% end %>
+    <%= yield %>
   </div>
-  <%= yield %>
-</div>
 
 </body>
 </html>

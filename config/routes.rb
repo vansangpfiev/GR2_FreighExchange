@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   namespace :supplier do
   	get "profile" => "profile#show"
+    get "home" => "home#index"
     get "vehicles" => "vehicle#index"
   end
 

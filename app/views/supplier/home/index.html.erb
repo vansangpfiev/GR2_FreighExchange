@@ -1,0 +1,40 @@
+<div class="container" id="app-area">
+  <section class="row">
+    <a class="btn btn-default" href="#" role="button">Link</a>
+    <button class="btn btn-default" type="submit">Button</button>
+    <input class="btn btn-default" type="button" value="Input">
+    <input class="btn btn-default" type="submit" value="Submit">
+  </section>
+  <section class="row">
+    <br/><br/><br/><br/>
+  </section>
+  <section class="row">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>From</th>
+          <th>Description</th>
+          <th>Action</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @requests.each do |item| %> 
+          <tr>
+            <td><%= item.id %></td>
+            <td><%= item.customer.user.email %></td>
+            <td>This text is static content....</td>
+            <td><span class="glyphicon glyphicon-pencil"></span></td>
+            <td>
+              <% if item.status == "none" %>
+                This request curently open, <a href="#">more...</a>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+</div>
+
