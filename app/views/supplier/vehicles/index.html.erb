@@ -1,0 +1,39 @@
+<div class="container" id="app-area">
+  <section class="row">
+    <a class="btn btn-default" href="#" role="button">Link</a>
+    <button class="btn btn-default" type="submit">Button</button>
+    <input class="btn btn-default" type="button" value="Input">
+    <input class="btn btn-default" type="submit" value="Submit">
+  </section>
+  <section class="row">
+  <br/><br/><br/><br/><br/><br/><br/>
+  </section>
+  <section class="row">
+    <table class="table table-hover">
+      <thead>
+        <td> vehicle id </td>
+        <td> license number</td>
+        <td> available </td>
+        <td> supplier id </td>
+        <td> cost per km </td>  
+      </thead>
+      <tbody>
+        
+         <% @vehicles.each do |vehicle|%>
+           <tr> 
+            <td><%= vehicle.id%></td>
+            <td><%= vehicle.vehicle_number %></td>
+            <td><%= vehicle.available %></td>
+            <td><%= vehicle.s_id %></td>
+            <td><%= vehicle.cost_per_km %></td>
+            <td><%= link_to 'Show',controller: "vehicles", action: "show", id: vehicle.id %></td>
+            <td><%= link_to 'Edit', edit_supplier_vehicle_path(vehicle) %></td>
+            <td><%= link_to 'Destroy' %></td>
+          </tr>
+         
+         <% end %>
+        
+      </tbody>
+    </table>
+  </section>
+</div>

@@ -1,0 +1,33 @@
+<%= form_for([:supplier, @vehicle]) do |f| %>
+  <% if @vehilce.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@vehilce.errors.count, "error") %> prohibited this vehilce from being saved:</h2>
+
+      <ul>
+      <% @vehilce.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :vehicle_number %><br>
+    <%= f.text_field :vehicle_number %>
+  </div>
+  <div class="field">
+    <%= f.label :s_id %><br>
+    <%= f.text_area :s_id, :rows => 6 %>
+  </div>
+  <div class="field">
+    <%= f.label :category_id %><br>
+    <%= f.text_field :category_id %>
+  </div>
+  <div class="field">
+    <%= f.label :cost_per_km %><br>
+    <%= f.text_field :cost_per_km %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
