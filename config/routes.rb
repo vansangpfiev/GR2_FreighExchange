@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   root "static_pages#home"
 
   namespace :supplier do
-  	get "profile" => "profile#index"
+  	get "profile" => "profile#show"
     get "vehicles" => "vehicle#index"
   end
 
@@ -13,5 +13,6 @@ Rails.application.routes.draw do
 
   namespace :customer do
     resources :requests
+    get "profile" => "profile#show"
   end
 end
