@@ -4,8 +4,13 @@ Rails.application.routes.draw do
 
   namespace :supplier do
   	get "profile" => "profile#show"
+
   	get "profile" => "profile#index"
     resources :vehicles
+
+    
+    get "vehicles" => "vehicle#index"
+
   end
 
   namespace :admin do
