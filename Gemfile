@@ -19,6 +19,9 @@ gem "bootstrap3-datetimepicker-rails", "~> 4.17.37"
 
 gem "sdoc", "~> 0.4.0", group: :doc
 
+gem "carrierwave"
+gem "mini_magick"
+
 group :development, :test do
   gem "byebug"
   gem "web-console", "~> 2.0"

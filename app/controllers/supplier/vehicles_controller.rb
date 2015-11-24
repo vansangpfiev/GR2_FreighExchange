@@ -17,7 +17,7 @@ class Supplier::VehiclesController < Supplier::BaseController
 
   def create
     @vehicle = Vehicle.new(vehicle_params)
-
+    @vehicle.image = params[:file]
     
     respond_to do |format|
       if @vehicle.save
@@ -56,6 +56,6 @@ class Supplier::VehiclesController < Supplier::BaseController
   end
 
   def vehicle_params
-      params.require(:vehicle).permit(:vehicle_number, :available, :point, :s_id, :category_id, :cost_per_km)
+      params.require(:vehicle).permit(:vehicle_number, :available, :point, :s_id, :category_id, :cost_per_km, :image)
     end
 end
