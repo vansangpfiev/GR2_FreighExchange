@@ -42,18 +42,20 @@ ActiveRecord::Schema.define(version: 20151105025317) do
   end
 
   create_table "request", primary_key: "request_id", force: :cascade do |t|
-    t.integer "customer_id"
-    t.float   "weight"
-    t.integer "goods_type",        limit: 2
-    t.float   "height"
-    t.float   "length"
-    t.float   "capacity"
-    t.string  "other_description", limit: 60
-    t.integer "start_point",       limit: 8
-    t.integer "end_point",         limit: 8
-    t.string  "status",            limit: 15
-    t.integer "category_id"
-    t.date    "time"
+    t.integer  "customer_id"
+    t.float    "weight"
+    t.integer  "goods_type",        limit: 2
+    t.float    "height"
+    t.float    "length"
+    t.float    "capacity"
+    t.string   "other_description", limit: 60
+    t.integer  "start_point",       limit: 8
+    t.integer  "end_point",         limit: 8
+    t.string   "status",            limit: 15
+    t.integer  "category_id"
+    t.datetime "time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "schedule", primary_key: "schedule_id", force: :cascade do |t|
@@ -111,21 +113,23 @@ ActiveRecord::Schema.define(version: 20151105025317) do
 # Could not dump table "vehicle" because of following StandardError
 #   Unknown type 'geometry(Point,4269)' for column 'point'
 
-  create_table "vehicle_category", primary_key: "category_id", force: :cascade do |t|
-    t.integer "s_id"
-    t.string  "name",        limit: 60
-    t.string  "description", limit: 60
+  create_table "vehicle_category", force: :cascade do |t|
+    t.string "name",        limit: 60
+    t.string "description", limit: 60
+    t.float  "weight"
+    t.float  "height"
+    t.float  "length"
+    t.float  "capacity"
   end
 
   add_foreign_key "abstract_trip", "location", column: "end_point", primary_key: "location_id", name: "abstract_trip_end_point_fkey"
   add_foreign_key "abstract_trip", "location", column: "start_point", primary_key: "location_id", name: "abstract_trip_start_point_fkey"
-  add_foreign_key "abstract_trip", "vehicle_category", column: "category_id", primary_key: "category_id", name: "abstract_trip_category_id_fkey"
+  add_foreign_key "abstract_trip", "vehicle_category", column: "category_id", name: "abstract_trip_category_id_fkey"
   add_foreign_key "request", "customer", primary_key: "customer_id", name: "request_cus_id_fkey"
   add_foreign_key "schedule", "request", primary_key: "request_id", name: "schedule_request_id_fkey"
   add_foreign_key "trip", "schedule", primary_key: "schedule_id", name: "trip_schedule_id_fkey"
-  add_foreign_key "trip", "vehicle", primary_key: "vehicle_id", name: "trip_vehicle_id_fkey"
   add_foreign_key "v_category_properties", "properties", primary_key: "property_id", name: "v_category_properties_property_id_fkey"
-  add_foreign_key "v_category_properties", "vehicle_category", column: "category_id", primary_key: "category_id", name: "v_category_properties_v_category_id_fkey"
-  add_foreign_key "vehicle", "vehicle_category", column: "category_id", primary_key: "category_id", name: "vehicle_category_id_fkey"
-  add_foreign_key "vehicle_category", "supplier", column: "s_id", primary_key: "s_id", name: "vehicle_category_s_id_fkey"
+  add_foreign_key "v_category_properties", "vehicle_category", column: "category_id", name: "v_category_properties_v_category_id_fkey"
+  add_foreign_key "vehicle", "supplier", column: "s_id", primary_key: "s_id", name: "vehicle_s_id_fkey"
+  add_foreign_key "vehicle", "vehicle_category", column: "category_id", name: "vehicle_category_id_fkey"
 end

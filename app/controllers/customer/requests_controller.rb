@@ -3,7 +3,7 @@ class Customer::RequestsController < Customer::BaseController
   before_action :validate_customer
 
   def index
-    @requests = current_user.customer.requests
+    @requests = current_user.get_detailed_info.requests
   end
 
   def show
@@ -19,7 +19,7 @@ class Customer::RequestsController < Customer::BaseController
   end
 
   def create
-    @request = current_user.customer.requests.build submit_params
+    @request = current_user.get_detailed_info.requests.build submit_params
     @request.time = DateTime.strptime(submit_params[:time], '%m/%d/%Y %H:%M %p')
     respond_to do |format|
       if @request.save

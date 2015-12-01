@@ -3,14 +3,8 @@ Rails.application.routes.draw do
   root "static_pages#home"
 
   namespace :supplier do
-  	get "profile" => "profile#show"
-
-  	get "profile" => "profile#index"
+  	get "profile" => "home#index"
     resources :vehicles
-
-    
-    get "vehicles" => "vehicle#index"
-
   end
 
   namespace :admin do
