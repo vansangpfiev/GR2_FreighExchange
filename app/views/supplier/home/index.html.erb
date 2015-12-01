@@ -28,7 +28,7 @@
             <td><span class="glyphicon glyphicon-pencil"></span></td>
             <td>
               <% if item.status == "none" %>
-                This request curently open, <a href="#">more...</a>
+                This request curently open, <%= link_to "more...", supplier_request_path(item.id) %></a>
               <% end %>
             </td>
           </tr>

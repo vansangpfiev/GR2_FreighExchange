@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   namespace :supplier do
   	get "profile" => "home#index"
     resources :vehicles
+    resources :requests, only: [:show]
   end
 
   namespace :admin do

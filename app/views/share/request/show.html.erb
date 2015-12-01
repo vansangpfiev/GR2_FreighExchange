@@ -1,0 +1,117 @@
+<div class="container-fluid">
+  <div class="form-area">
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Customer info:</h3> 
+      </div>
+    </div>
+    <div class="row">      
+      <div class="col-md-4">
+        <label>Email:</label>
+        <%= @request.customer.user.email %>
+      </div>
+      <div class="col-md-4">
+        <label>Address:</label>
+        <%= @request.customer.address %>
+      </div>
+      <div class="col-md-4">
+        <label>Phone number:</label>
+        <%= @request.customer.tel %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Location details</h3>
+        <div class="col-md-4">From: abc</div>
+        <div class="col-md-4">To: xyz</div>
+        <div class="col-md-4">
+          <button class="btn btn-default">View in map</button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Physical properties</h3>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-md-6">
+        <div class="col-md-6">
+          <div class="input-group">
+            <div class="input-group-addon">Weight</div>
+            <div class="form-control">
+              <%= @request.weight %>
+            </div>
+            <div class="input-group-addon">Ton</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group">
+            <div class="input-group-addon">Cap</div>
+            <div class="form-control">
+              <%= @request.capacity %>
+            </div>
+            <div class="input-group-addon">m3</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="col-md-4">
+          <div class="input-group">
+            <div class="input-group-addon">Height</div>
+            <div class="form-control">
+              <%= @request.height %>
+            </div>
+            <div class="input-group-addon">m</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group">
+            <div class="input-group-addon">Length</div>
+            <div class="form-control">
+              <%= @request.length %>
+            </div>
+            <div class="input-group-addon">m</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-md-4">
+        <label>Time:</label>
+        <div class='input-group date' id='desiredate'>        
+          <div class="form-control">
+            <%= @request.time %>
+          </div>
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-md-1">Others</label>
+      <div class="col-md-4">      
+        <div class="col-md-6" >
+          <label>Vehicle type:</label>
+          <div class="form-control"><%= @request.category_id %></div>
+        </div>
+        <div class="col-md-6">
+          <label>Good type:</label>
+          <div class="form-control"><%= @request.goods_type %></div>
+        </div>      
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-md-6">
+        <label>Description</label>
+        <p><%= @request.other_description %></p>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-md-4">
+        <button class="btn btn-default">Approve request</button>
+      </div>
+    </div>
+  </div>
+</div>
