@@ -13,4 +13,8 @@ def layout_by_resource
     "application"
   end
 end
+
+def after_sign_in_path_for resource
+  dispatcher_path
+end
 end
