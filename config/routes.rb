@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   get "dispatcher" => "request_dispatcher#main"
   get "error_pages" => "error_pages#error"
+  get "application" => "request_dispatcher#app_dispatcher"
 
   namespace :supplier do
   	get "profile" => "home#index"

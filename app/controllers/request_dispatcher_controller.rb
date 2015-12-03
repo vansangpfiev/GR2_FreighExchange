@@ -16,7 +16,26 @@ class RequestDispatcherController < ApplicationController
     else
       @error_code = "405"
       @message = "Method not allowed"
-      render "error_pages/error"  
+      render "error_pages/error"
+    end
+  end
+
+  def app_dispatcher
+    app_name = params[:app_name];
+    if app_name == "delivery"
+      if current_user.role == "customer"
+        redirect_to customer_requests_path
+      elsif current_user.role == "supplier"
+        redirect_to supplier_profile_path
+      else
+        @error_code = "401"
+        @message = "Unauthorized request."
+        render "error_pages/error"
+      end
+    else
+      @error_code = "###"
+      @message = "Application currently developing."
+      render "error_pages/error"
     end
   end
 end
