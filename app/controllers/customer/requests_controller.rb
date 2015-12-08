@@ -11,7 +11,7 @@ class Customer::RequestsController < Customer::BaseController
   end
 
   def new
-    @request = Request.new
+    @request = Request.new    
   end
 
   def edit
@@ -20,7 +20,13 @@ class Customer::RequestsController < Customer::BaseController
 
   def create
     @request = current_user.get_detailed_info.requests.build submit_params
+    
     @request.time = DateTime.strptime(submit_params[:time], '%m/%d/%Y %H:%M %p')
+    @request.start_point_lat = submit_params[:start_point_lat].to_f
+    @request.start_point_long = submit_params[:start_point_long].to_f
+    @request.end_point_lat = submit_params[:end_point_lat].to_f
+    @request.end_point_long = submit_params[:end_point_long].to_f
+
     respond_to do |format|
       if @request.save
         format.html { flash[:success] = 'Your request successfully created.'
@@ -62,8 +68,9 @@ class Customer::RequestsController < Customer::BaseController
   private
 
   def submit_params
-    params.require(:request).permit :vehicle_type, :weight, 
-      :goods_type, :height, :length, :capacity, :time, :description, :start_point, :end_point
+    params.require(:request).permit :weight, :goods_type, :height, :length, :capacity, :time, 
+      :start_point_lat, :start_point_long, :end_point_lat, :end_point_long, 
+        :category_id, :goods_type, :other_description
   end
 
   def validate_customer

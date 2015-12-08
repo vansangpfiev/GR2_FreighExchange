@@ -3,6 +3,7 @@
     $('#desiredate').datetimepicker();
   });
 </script>
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <%= form_for ([:customer, @request]) do |f| %>
 <% if @request.errors.any? %>
 <div id="error_explanation">
@@ -36,23 +37,69 @@
     <div class="col-md-6">
       <div class="col-md-4">
         <div class="input-group">
-          <div class="input-group-addon">Height</div>
+          <div class="input-group-addon">H</div>
           <%= f.number_field :height, class: "form-control" %>
           <div class="input-group-addon">m</div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="input-group">
-          <div class="input-group-addon">Length</div>
+          <div class="input-group-addon">L</div>
           <%= f.number_field :length, class: "form-control" %>
           <div class="input-group-addon">m</div>
         </div>
       </div>
     </div>
   </div>
+  <div class="row"><!-- Show address picker for start and end point-->
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Start location</th>
+          <th>End location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <fieldset class="gllpLatlonPicker">
+              <input type="text" class="gllpSearchField">
+              <input type="button" class="gllpSearchButton" value="search">
+              <br/><br/>
+              <div class="gllpMap">Google Maps</div>
+              <br/>
+              From:(lat/long)              
+              <%= f.text_field :start_point_lat, class: "gllpLatitude", value: @request.start_point_lat %>
+              /
+              <%= f.text_field :start_point_long, class: "gllpLongitude", value: @request.start_point_long %>              
+              zoom: <input type="text" class="gllpZoom" value="3"/>
+              <input type="button" class="gllpUpdateButton" value="update map">
+              <br/>
+            </fieldset>
+          </td>
+          <td>
+            <fieldset class="gllpLatlonPicker">
+              <input type="text" class="gllpSearchField">
+              <input type="button" class="gllpSearchButton" value="search">
+              <br/><br/>
+              <div class="gllpMap">Google Maps</div>
+              <br/>
+              From:(lat/long)              
+              <%= f.text_field :end_point_lat, class: "gllpLatitude", value: @request.end_point_lat %>
+              /
+              <%= f.text_field :end_point_long, class: "gllpLongitude", value: @request.end_point_long %>
+              zoom: <input type="text" class="gllpZoom" value="3"/>
+              <input type="button" class="gllpUpdateButton" value="update map">
+              <br/>
+            </fieldset>
+          </td>
+        </tr>
+      </tbody>
+    </table>  
+  </div>
   <div class="row form-group">
     <div class="col-md-4">
-      <%= f.label :time %>
+      <%= f.label :time %><p><%= @request.time %></p>
       <div class='input-group date' id='desiredate'>        
         <%= f.datetime_field :time, class: "form-control" %>
         <span class="input-group-addon">
@@ -65,21 +112,20 @@
     <label class="col-md-1">Others</label>
     <div class="col-md-4">      
       <div class="col-md-6" >
-        <%= f.label :vehicle_type %>
-        <%= select_tag :vehicle_type, options_for_select([['Lisbon', 1], ['Madrid', 2]], 2), 
-        class: "form-control" %>  
+        <%= f.label :category_id %>
+        <% vehicle_category = VehicleCategory.all.map { |type| [type.name, type.id] } %>
+        <%= f.select :category_id, options_for_select(vehicle_category, @request.category_id), {}, {class: "form-control"} %>        
       </div>
       <div class="col-md-6">
         <%= f.label :goods_type %>
-        <%= select_tag :goods_type, options_for_select([['Frezee', 1], ['Madrid', 2]], 2), 
-        class: "form-control" %>
+        <%= f.select :goods_type, options_for_select([['Frezee', 1], ['Madrid', 2]], 2), {}, {class: "form-control"} %>
       </div>      
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
       <%= f.label "Description" %>
-      <%= text_area_tag :other_description, "Other description", size: "24x6", class: "form-control" %>
+      <%= f.text_area :other_description, size: "24x6", class: "form-control" %>
     </div>
   </div>
   <div class="actions">
