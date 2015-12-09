@@ -4,4 +4,5 @@ class Request < ActiveRecord::Base
   scope :opened, -> {where status: "none"}
 
   belongs_to :customer
+  has_many :invoice
 end
