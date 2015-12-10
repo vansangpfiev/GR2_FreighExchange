@@ -34,7 +34,7 @@
   top: 0; left: 0; bottom: 0; right: 0;
   margin: auto;
   width: 300px;
-  height: 300px;
+  height: 250px;
 
   background: #f0f0fd;
   background: rgba(240,240,253,0.90);
@@ -76,3 +76,8 @@
 
 //Address picker > map
 .gllpMap  { width: 500px; height: 250px; }
+
+//Devise layout alert box
+#alert-box{
+  margin-top: 70px;
+}

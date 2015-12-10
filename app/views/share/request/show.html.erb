@@ -1,32 +1,67 @@
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <div class="container-fluid">
   <div class="form-area">
-    <div class="row">
-      <div class="col-md-4">
-        <h3>Customer info:</h3> 
+    <div class="row container", style="background-color: #AAB3AB;">
+      <div class="row">
+        <h3 class="col-md-8">Customer info:</h3> 
       </div>
-    </div>
-    <div class="row">      
-      <div class="col-md-4">
-        <label>Email:</label>
-        <%= @request.customer.user.email %>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Email:</label>
+          <%= @request.customer.user.email %>
+        </div>
+        <div class="col-md-4">
+          <label>Address:</label>
+          <%= @request.customer.address %>
+        </div>
+        <div class="col-md-4">
+          <label>Phone number:</label>
+          <%= @request.customer.tel %>
+        </div>
       </div>
-      <div class="col-md-4">
-        <label>Address:</label>
-        <%= @request.customer.address %>
-      </div>
-      <div class="col-md-4">
-        <label>Phone number:</label>
-        <%= @request.customer.tel %>
-      </div>
-    </div>
-    <div class="row">
+    </div>    
+    <div class="row container">
       <div class="col-md-4">
         <h3>Location details</h3>
-        <div class="col-md-4">From: abc</div>
-        <div class="col-md-4">To: xyz</div>
-        <div class="col-md-4">
-          <button class="btn btn-default">View in map</button>
-        </div>
+        <div class="row"><!-- Show address picker for start and end point-->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Start location</th>
+                <th>End location</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <fieldset class="gllpLatlonPicker">              
+                    <div class="gllpMap">Google Maps</div>
+                    <br/>
+                    From:(lat/long)
+                    <input class = "gllpLatitude", value = <%= @request.start_point_lat %> ></input>
+                    /
+                    <input class = "gllpLongitude", value = <%= @request.start_point_long %> ></input>
+                    <br/>
+                  </fieldset>
+                </td>
+                <td>
+                  <fieldset class="gllpLatlonPicker">              
+                    <div class="gllpMap">Google Maps</div>
+                    <br/>
+                    From:(lat/long)
+                    <input class = "gllpLatitude", value = <%= @request.end_point_lat %> ></input>
+                    /
+                    <input class = "gllpLongitude", value = <%= @request.end_point_long %> ></input>
+                    <br/>
+                  </fieldset>
+                </td>
+              </tr>
+            </tbody>
+          </table> 
+          <div id="estimate-way"> 
+            <label>About:&nbsp</label>235 km <label>in&nbsp</label> 5 hours
+          </div>
+        </div><!-- End show address picker for start and end point-->
       </div>
     </div>
     <div class="row">
@@ -94,7 +129,7 @@
       <div class="col-md-4">      
         <div class="col-md-6" >
           <label>Vehicle type:</label>
-          <div class="form-control"><%= @request.category_id %></div>
+          <div class="form-control"><%= VehicleCategory.find_by_id(@request.category_id).nil? ? "Not selected"  : VehicleCategory.find_by_id(@request.category_id).name %></div>
         </div>
         <div class="col-md-6">
           <label>Good type:</label>
@@ -108,10 +143,27 @@
         <p><%= @request.other_description %></p>
       </div>
     </div>
-    <div class="row form-group">
-      <div class="col-md-4">
-        <button class="btn btn-default">Approve request</button>
+    <% if @show_approve_form %>
+    <div class="row">
+      <%= form_tag("/supplier/approve_request", method: "post", class: "") do %>
+      <%= hidden_field_tag :request_id, @request.id %>
+      <div class="form-group container">
+        <div class="row">
+          <label>Offer price:</label>
+          <%= text_field_tag(:offer_price) %>
+        </div>
+        <div class="row">
+          <label>Message to customer</label>
+          <%= text_area_tag(:message, "Hi, you're welcome", size: "24x6") %>
+        </div>
+        <div class="row">
+          <%= submit_tag("Approve request", class: "btn btn-default") %>
+        </div>
       </div>
+      <% end %>
     </div>
+    <% elsif %>
+      <button class="btn btn-default">Approved</button>
+    <% end %>
   </div>
 </div>

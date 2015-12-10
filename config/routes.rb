@@ -6,13 +6,14 @@ Rails.application.routes.draw do
   get "help" => "static_pages#help"
 
   get "dispatcher" => "request_dispatcher#main"
-  get "error_pages" => "error_pages#error"
+  get "error/index"
   get "application" => "request_dispatcher#app_dispatcher"
 
   namespace :supplier do
   	get "profile" => "home#index"
+    post "approve_request" => "requests#approve"
     resources :vehicles
-    resources :requests, only: [:show]
+    resources :requests, only: [:show]    
   end
 
   namespace :admin do

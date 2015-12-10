@@ -10,9 +10,7 @@ class RequestDispatcherController < ApplicationController
     when "supplier"
       redirect_to root_path
     when nil      
-      @error_code = "502"
-      @message = "Your account is not accessable, contact to admin!"
-      render "error_pages/error"
+      redirect_to controller: "error", action: "index", error_code: "403", message: "User not active"
     else
       @error_code = "405"
       @message = "Method not allowed"
