@@ -193,6 +193,43 @@ ALTER SEQUENCE customer_customer_id_seq OWNED BY customer.customer_id;
 
 
 --
+-- Name: invoices; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE invoices (
+    invoice_id integer NOT NULL,
+    supplier_id integer,
+    vehicle_id integer,
+    schedule_id integer,
+    request_id integer,
+    offer_price real,
+    status character varying(15),
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    message character varying(500)
+);
+
+
+--
+-- Name: invoices_invoice_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE invoices_invoice_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: invoices_invoice_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE invoices_invoice_id_seq OWNED BY invoices.invoice_id;
+
+
+--
 -- Name: location; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -309,7 +346,7 @@ CREATE TABLE schema_migrations (
 --
 
 CREATE TABLE supplier (
-    s_id integer NOT NULL,
+    supplier_id integer NOT NULL,
     name character varying(60),
     address character varying(60),
     tel bigint,
@@ -334,7 +371,7 @@ CREATE SEQUENCE supplier_s_id_seq
 -- Name: supplier_s_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE supplier_s_id_seq OWNED BY supplier.s_id;
+ALTER SEQUENCE supplier_s_id_seq OWNED BY supplier.supplier_id;
 
 
 --
@@ -426,7 +463,7 @@ CREATE TABLE v_category_properties (
 --
 
 CREATE TABLE vehicle (
-    id integer NOT NULL,
+    vehicle_id integer NOT NULL,
     vehicle_number character varying(30) NOT NULL,
     cost_per_km real,
     point geometry(Point,4269),
@@ -487,7 +524,7 @@ CREATE SEQUENCE vehicle_id_seq
 -- Name: vehicle_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE vehicle_id_seq OWNED BY vehicle.id;
+ALTER SEQUENCE vehicle_id_seq OWNED BY vehicle.vehicle_id;
 
 
 --
@@ -505,6 +542,13 @@ ALTER TABLE ONLY customer ALTER COLUMN customer_id SET DEFAULT nextval('customer
 
 
 --
+-- Name: invoice_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY invoices ALTER COLUMN invoice_id SET DEFAULT nextval('invoices_invoice_id_seq'::regclass);
+
+
+--
 -- Name: location_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -519,10 +563,10 @@ ALTER TABLE ONLY request ALTER COLUMN request_id SET DEFAULT nextval('request_re
 
 
 --
--- Name: s_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: supplier_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY supplier ALTER COLUMN s_id SET DEFAULT nextval('supplier_s_id_seq'::regclass);
+ALTER TABLE ONLY supplier ALTER COLUMN supplier_id SET DEFAULT nextval('supplier_s_id_seq'::regclass);
 
 
 --
@@ -540,10 +584,10 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: vehicle_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::regclass);
+ALTER TABLE ONLY vehicle ALTER COLUMN vehicle_id SET DEFAULT nextval('vehicle_id_seq'::regclass);
 
 
 --
@@ -567,6 +611,14 @@ ALTER TABLE ONLY abstract_trip
 
 ALTER TABLE ONLY customer
     ADD CONSTRAINT customer_pkey PRIMARY KEY (customer_id);
+
+
+--
+-- Name: invoice_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY invoices
+    ADD CONSTRAINT invoice_pkey PRIMARY KEY (invoice_id);
 
 
 --
@@ -606,7 +658,7 @@ ALTER TABLE ONLY schedule
 --
 
 ALTER TABLE ONLY supplier
-    ADD CONSTRAINT supplier_pkey PRIMARY KEY (s_id);
+    ADD CONSTRAINT supplier_pkey PRIMARY KEY (supplier_id);
 
 
 --
@@ -646,7 +698,7 @@ ALTER TABLE ONLY vehicle_category
 --
 
 ALTER TABLE ONLY vehicle
-    ADD CONSTRAINT vehicle_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT vehicle_pkey PRIMARY KEY (vehicle_id);
 
 
 --
@@ -724,6 +776,38 @@ ALTER TABLE ONLY abstract_trip
 
 
 --
+-- Name: invoice_request_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY invoices
+    ADD CONSTRAINT invoice_request_id_fkey FOREIGN KEY (request_id) REFERENCES request(request_id);
+
+
+--
+-- Name: invoice_schedule_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY invoices
+    ADD CONSTRAINT invoice_schedule_id_fkey FOREIGN KEY (schedule_id) REFERENCES schedule(schedule_id);
+
+
+--
+-- Name: invoice_supplier_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY invoices
+    ADD CONSTRAINT invoice_supplier_id_fkey FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id);
+
+
+--
+-- Name: invoice_vehicle_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY invoices
+    ADD CONSTRAINT invoice_vehicle_id_fkey FOREIGN KEY (vehicle_id) REFERENCES vehicle(vehicle_id);
+
+
+--
 -- Name: request_cus_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -776,7 +860,7 @@ ALTER TABLE ONLY vehicle
 --
 
 ALTER TABLE ONLY vehicle
-    ADD CONSTRAINT vehicle_s_id_fkey FOREIGN KEY (s_id) REFERENCES supplier(s_id);
+    ADD CONSTRAINT vehicle_s_id_fkey FOREIGN KEY (s_id) REFERENCES supplier(supplier_id);
 
 
 --
