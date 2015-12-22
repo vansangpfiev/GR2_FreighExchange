@@ -17,11 +17,12 @@
     <% @requests.each do |request| %>
     <tr>
       <td><%= request.id %></td>
-      <td>request.date_create</td>
+      <td><%= request.created_at %></td>
       <td>Ha Noi</td>
       <td>Ho Chi Minh</td>
       <td>
-        <%= link_to "", edit_customer_request_path(request), class: "glyphicon glyphicon-pencil" %>
+        <%= link_to "", customer_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp
+        <%= link_to "", edit_customer_request_path(request), class: "glyphicon glyphicon-pencil" %>&nbsp&nbsp
         <span class="glyphicon glyphicon-trash"></span>
       </td>
     </tr>

@@ -59,7 +59,8 @@
             </tbody>
           </table> 
           <div id="estimate-way"> 
-            <label>About:&nbsp</label>235 km <label>in&nbsp</label> 5 hours
+            <label>About:&nbsp</label><%= @request.distance_estimate.nil? ? "Can not estimate " : @request.distance_estimate/1000 %>km&nbsp
+            <label>in&nbsp</label> some_values_goes_here hours
           </div>
         </div><!-- End show address picker for start and end point-->
       </div>

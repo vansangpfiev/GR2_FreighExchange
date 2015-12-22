@@ -298,7 +298,8 @@ CREATE TABLE request (
     start_point_lat numeric,
     start_point_long numeric,
     end_point_lat numeric,
-    end_point_long numeric
+    end_point_long numeric,
+    distance_estimate integer
 );
 
 

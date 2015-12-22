@@ -1,3 +1,5 @@
+require "GoogleAPI"
+
 class Customer::RequestsController < Customer::BaseController
   before_action :authenticate_user!
   before_action :validate_customer
@@ -7,7 +9,8 @@ class Customer::RequestsController < Customer::BaseController
   end
 
   def show
-    @request = Request.find params[:id]
+    @request = current_user.get_detailed_info.requests.find(params[:id])
+    render "share/request/show"
   end
 
   def new
@@ -26,6 +29,15 @@ class Customer::RequestsController < Customer::BaseController
     @request.start_point_long = submit_params[:start_point_long].to_f
     @request.end_point_lat = submit_params[:end_point_lat].to_f
     @request.end_point_long = submit_params[:end_point_long].to_f
+
+    distance = GoogleAPI.new().distanceEstimate(@request.start_point_lat,
+      @request.start_point_long,
+      @request.end_point_lat,
+      @request.end_point_long)
+
+    if !distance.nil?
+      @request.distance_estimate = distance.to_i
+    end
 
     respond_to do |format|
       if @request.save
