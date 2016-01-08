@@ -143,28 +143,53 @@
         <label>Description</label>
         <p><%= @request.other_description %></p>
       </div>
-    </div>
-    <% if @show_approve_form %>
-    <div class="row">
-      <%= form_tag("/supplier/approve_request", method: "post", class: "") do %>
-      <%= hidden_field_tag :request_id, @request.id %>
-      <div class="form-group container">
-        <div class="row">
-          <label>Offer price:</label>
-          <%= text_field_tag(:offer_price) %>
-        </div>
-        <div class="row">
-          <label>Message to customer</label>
-          <%= text_area_tag(:message, "Hi, you're welcome", size: "24x6") %>
-        </div>
-        <div class="row">
-          <%= submit_tag("Approve request", class: "btn btn-default") %>
-        </div>
-      </div>
-      <% end %>
-    </div>
-    <% elsif %>
-      <button class="btn btn-default">Approved</button>
-    <% end %>
+    </div>    
   </div>
+</div>
+<div class="container">
+  <% if @show_approve_form %>
+  <div class="row">
+    <span class="col-md-8"><label>Approve this request</label></span>
+  </div>
+  <div class="row">
+    <%= form_tag("/supplier/approve_request", method: "post", class: "") do %>
+    <%= hidden_field_tag :request_id, @request.id %>
+    <div class="form-group container">
+      <div class="row">
+        <label>Offer price:</label>
+        <%= text_field_tag(:offer_price) %>
+      </div>
+      <div class="row">
+        <label>Message to customer</label>
+        <%= text_area_tag(:message, "Hi, you're welcome", size: "24x6") %>
+      </div>
+      <div class="row">
+        <%= submit_tag("Approve request", class: "btn btn-default") %>
+      </div>
+    </div>
+    <% end %>
+  </div>  
+  <% end %>
+  <% if current_user.role == "customer" %>
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Supplier</th>
+        <th>Offer price</th>        
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @request.invoices.each do |invoice| %>
+      <tr>
+        <td><%= invoice.supplier.name %></td>
+        <td><%= invoice.offer_price %></td>
+        <td>
+          <button>OK</button>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% end %>
 </div>

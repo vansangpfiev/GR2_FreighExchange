@@ -3,30 +3,34 @@
 </div>
 
 <div class="row">
+  <%= button_to "New request", new_customer_request_path, method: :get%>
+</div>
+
+<div class="row">
   <table class="table table-striped">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Date create</th>
-      <th>From</th>
-      <th>To</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @requests.each do |request| %>
-    <tr>
-      <td><%= request.id %></td>
-      <td><%= request.created_at %></td>
-      <td>Ha Noi</td>
-      <td>Ho Chi Minh</td>
-      <td>
-        <%= link_to "", customer_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp
-        <%= link_to "", edit_customer_request_path(request), class: "glyphicon glyphicon-pencil" %>&nbsp&nbsp
-        <span class="glyphicon glyphicon-trash"></span>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Date create</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @requests.each do |request| %>
+      <tr>
+        <td><%= request.id %></td>
+        <td><%= request.created_at %></td>
+        <td>Ha Noi</td>
+        <td>Ho Chi Minh</td>
+        <td>
+          <%= link_to "", customer_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp          
+          <%= link_to "", customer_request_path(request), method: :delete, class: "glyphicon glyphicon-trash", 
+          :data => {confirm: "Delete this request, your action can not undo?"} %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>

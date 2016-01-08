@@ -5,7 +5,9 @@ class Customer::RequestsController < Customer::BaseController
   before_action :validate_customer
 
   def index
-    @requests = current_user.get_detailed_info.requests
+    @requests = current_user.get_detailed_info.
+      requests.get_all.
+      paginate(:page => params[:page], :per_page => 10)
   end
 
   def show
@@ -69,10 +71,12 @@ class Customer::RequestsController < Customer::BaseController
   end
 
   def destroy
-    @request.destroy
+    @request = Request.find params[:id]
+    @request.status = "deleted"
+    @request.save
     respond_to do |format|
-      format.html { redirect_to customer_requests_path,
-        flash[:danger] = 'Your request successfully destroyed.' }
+      format.html { flash[:danger] = "Your request successfully destroyed."
+        redirect_to customer_requests_path}
       format.json { head :no_content }
     end
   end
