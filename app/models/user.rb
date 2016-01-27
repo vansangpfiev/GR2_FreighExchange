@@ -7,8 +7,8 @@ class User < ActiveRecord::Base
   def get_detailed_info
     if self.role == "customer"
       Customer.find_by user_id: self.id
-    elsif self.role == "provider"
-      Provider.find_by user_id: self.id
+    elsif self.role == "supplier"
+      Supplier.find_by user_id: self.id
     end
   end
 

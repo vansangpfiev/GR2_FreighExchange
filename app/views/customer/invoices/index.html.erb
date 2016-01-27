@@ -1,0 +1,43 @@
+<div class="container" id="app-area">
+  <section class="row">
+    <a class="btn btn-default" href="#" role="button">Link</a>
+    <button class="btn btn-default" type="submit">Button</button>
+    <input class="btn btn-default" type="button" value="Input">
+    <input class="btn btn-default" type="submit" value="Submit">
+  </section>
+  <section class="row">
+  <br/><br/><br/><br/><br/><br/><br/>
+  </section>
+  <section class="row">
+    <table class="table table-hover">
+      <thead>
+        <th> Invoice id </th>
+        <th> supplier id </th>
+        <th> offer price</th>
+        <th> message</th>
+          
+      </thead>
+      <tbody>
+        
+         <% @invoices.each do |invoice|%>
+         <% if invoice.status == "pending" %>
+           <tr> 
+            <%= form_tag("/customer/accept_invoice", method: "post", class: "") do %>
+            <%= hidden_field_tag :invoice_id, invoice.id %>
+            <td><%= invoice.id %></td>
+            <td><%= invoice.supplier_id %></td>
+            <td><%= invoice.offer_price %></td>
+            <td><%= invoice.message %></td>
+            <td class="row">
+              <%= submit_tag("Accept", class: "btn btn-default") %>
+            </td>
+            <% end %>
+          </tr>
+
+         <% end %>
+         <% end %>
+        
+      </tbody>
+    </table>
+  </section>
+</div>

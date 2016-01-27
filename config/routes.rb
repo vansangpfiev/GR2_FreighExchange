@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   	get "profile" => "home#index"
     post "approve_request" => "requests#approve"
     resources :vehicles
-    resources :requests, only: [:show]    
+    resources :requests   
   end
 
   namespace :admin do
@@ -22,6 +22,8 @@ Rails.application.routes.draw do
 
   namespace :customer do
     resources :requests
+    resources :invoices
+    post "accept_invoice" => "invoices#accept"
     get "profile" => "profile#show"
   end
 end

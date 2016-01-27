@@ -21,6 +21,8 @@ gem "sdoc", "~> 0.4.0", group: :doc
 
 gem "carrierwave"
 gem "mini_magick"
+gem 'will_paginate', '>= 3.0.pre'
+gem 'delayed_job_active_record'
 
 group :development, :test do
   gem "byebug"

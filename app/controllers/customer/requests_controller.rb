@@ -29,6 +29,7 @@ class Customer::RequestsController < Customer::BaseController
     @request.start_point_long = submit_params[:start_point_long].to_f
     @request.end_point_lat = submit_params[:end_point_lat].to_f
     @request.end_point_long = submit_params[:end_point_long].to_f
+    @request.status = "none"
 
     distance = GoogleAPI.new().distanceEstimate(@request.start_point_lat,
       @request.start_point_long,
@@ -91,4 +92,6 @@ class Customer::RequestsController < Customer::BaseController
       redirect_to "root_path"
     end
   end
+
+  
 end

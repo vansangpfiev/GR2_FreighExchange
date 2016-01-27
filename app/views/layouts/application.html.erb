@@ -19,6 +19,17 @@
         </button>
         <%= link_to image_tag("img_home.png"), root_path, class: "navbar-brand", style: "margin-bottom: 10px" %>
       </div>
+      <% if current_user.role == "supplier" %>
+      <div>  <%= link_to "You have " + (Request.where(:status => "none").count - Invoice.where(:supplier_id => Supplier.select(:supplier_id).find_by_user_id(current_user.id)).count).to_s + " request(s)", supplier_profile_path %></div><br />
+      <div>abc <%= Invoice.where(:supplier_id => (Supplier.select(:supplier_id).find_by_user_id(current_user.id)), :status => "accepted").count%></div>
+      <% end %>
+
+      <% if current_user.role == "customer" %>
+      <div> 
+       <td> <%= link_to "You have " + Invoice.where(:request_id => (Request.select(:request_id).where(:customer_id => Customer.select(:customer_id).find_by_user_id(current_user.id))), :status => "pending").count.to_s + " response(s)", customer_invoices_path %> </td>
+       
+      </div>
+      <% end %>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">        
           <% if !@breadcrumb.nil? %>

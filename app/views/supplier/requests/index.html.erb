@@ -1,0 +1,32 @@
+<div class="row">
+  <h3>View all requests</h3>
+</div>
+
+<div class="row">
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Date create</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @requests.each do |request| %>
+    <tr>
+      <td><%= request.id %></td>
+      <td><%= request.created_at %></td>
+      <td><b>Ha Noi</b></td>
+      <td>Ho Chi Minh</td>
+      <td>
+        <%= link_to "", supplier_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp
+        <%= link_to "", edit_supplier_request_path(request), class: "glyphicon glyphicon-pencil" %>&nbsp&nbsp
+        <span class="glyphicon glyphicon-trash"></span>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

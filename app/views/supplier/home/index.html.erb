@@ -22,15 +22,19 @@
       <tbody>
         <% @requests.each do |item| %> 
           <tr>
-            <td><%= item.id %></td>
-            <td><%= item.customer.user.email %></td>
-            <td>This text is static content....</td>
-            <td><span class="glyphicon glyphicon-pencil"></span></td>
-            <td>
+            <% invoice = Invoice.find_by request_id: item.id, supplier_id: Supplier.select(:supplier_id).find_by_user_id(current_user.id) %>
+            <% if invoice.nil? %>
+              <td><%= item.id %></td>
+              <td><%= item.customer.user.email %></td>
+              <td>This text is static content....</td>
+              <td><span class="glyphicon glyphicon-pencil"></span></td>
+              <td>
+              
               <% if item.status == "none" %>
                 This request curently open, <%= link_to "more...", supplier_request_path(item.id) %></a>
               <% end %>
             </td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>
