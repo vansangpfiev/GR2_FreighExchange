@@ -32,6 +32,15 @@ class Customer::RequestsController < Customer::BaseController
     @request.end_point_lat = submit_params[:end_point_lat].to_f
     @request.end_point_long = submit_params[:end_point_long].to_f
 
+    # Check input location has already been in location db
+    start_point = Location.find_nearest_point(@request.start_point_lat, @request.start_point_long)
+    end_point = Location.find_nearest_point(@request.end_point_lat, @request.end_point_long)
+
+    @request.start_point = start_point.location_id if start_point != nil
+    @request.end_point = end_point.location_id if end_point != nil
+    byebug
+
+    #Estimate distance by google service
     distance = GoogleAPI.new().distanceEstimate(@request.start_point_lat,
       @request.start_point_long,
       @request.end_point_lat,
@@ -40,6 +49,9 @@ class Customer::RequestsController < Customer::BaseController
     if !distance.nil?
       @request.distance_estimate = distance.to_i
     end
+
+    #Set request status = 'none'
+    @request.status = "none"
 
     respond_to do |format|
       if @request.save

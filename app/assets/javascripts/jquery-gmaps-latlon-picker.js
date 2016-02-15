@@ -231,8 +231,8 @@ $.fn.gMapsLatLonPicker = (function() {
 });
 
 }(jQuery));
-
-$(document).ready( function() {
+//Fix page:load "turbo link rails"
+$(document).on("ready page:load", function(){
 	$(".gllpLatlonPicker").each(function() {
 		$(document).gMapsLatLonPicker().init( $(this) );
 	});

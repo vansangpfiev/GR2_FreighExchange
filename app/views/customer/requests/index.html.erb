@@ -22,8 +22,8 @@
       <tr>
         <td><%= request.id %></td>
         <td><%= request.created_at %></td>
-        <td>Ha Noi</td>
-        <td>Ho Chi Minh</td>
+        <td><%= Location.find_by_location_id(request.start_point).address if !Location.find_by_location_id(request.start_point).nil? %></td>
+        <td><%= Location.find_by_location_id(request.end_point).address if !Location.find_by_location_id(request.end_point).nil? %></td>
         <td>
           <%= link_to "", customer_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp          
           <%= link_to "", customer_request_path(request), method: :delete, class: "glyphicon glyphicon-trash", 

@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(version: 20151105025317) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
+  enable_extension "pgrouting"
 
   create_table "abstract_trip", primary_key: "ab_trip_id", force: :cascade do |t|
     t.integer "category_id"
@@ -31,6 +32,18 @@ ActiveRecord::Schema.define(version: 20151105025317) do
     t.string  "email",    limit: 60
     t.integer "user_id"
     t.string  "tel",      limit: 20
+  end
+
+  create_table "invoices", primary_key: "invoice_id", force: :cascade do |t|
+    t.integer  "supplier_id"
+    t.integer  "vehicle_id"
+    t.integer  "schedule_id"
+    t.integer  "request_id"
+    t.float    "offer_price"
+    t.string   "status",      limit: 15
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "message",     limit: 500
   end
 
 # Could not dump table "location" because of following StandardError
@@ -56,6 +69,11 @@ ActiveRecord::Schema.define(version: 20151105025317) do
     t.datetime "time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.decimal  "start_point_lat"
+    t.decimal  "start_point_long"
+    t.decimal  "end_point_lat"
+    t.decimal  "end_point_long"
+    t.integer  "distance_estimate"
   end
 
   create_table "schedule", primary_key: "schedule_id", force: :cascade do |t|
@@ -70,11 +88,12 @@ ActiveRecord::Schema.define(version: 20151105025317) do
     t.string  "proj4text", limit: 2048
   end
 
-  create_table "supplier", primary_key: "s_id", force: :cascade do |t|
+  create_table "supplier", primary_key: "supplier_id", force: :cascade do |t|
     t.string  "name",    limit: 60
     t.string  "address", limit: 60
     t.integer "tel",     limit: 8
     t.string  "email",   limit: 60
+    t.integer "user_id"
   end
 
   create_table "trip", id: false, force: :cascade do |t|
@@ -122,14 +141,21 @@ ActiveRecord::Schema.define(version: 20151105025317) do
     t.float  "capacity"
   end
 
+# Could not dump table "ways" because of following StandardError
+#   Unknown type 'geometry(LineString,4269)' for column 'the_geom'
+
   add_foreign_key "abstract_trip", "location", column: "end_point", primary_key: "location_id", name: "abstract_trip_end_point_fkey"
   add_foreign_key "abstract_trip", "location", column: "start_point", primary_key: "location_id", name: "abstract_trip_start_point_fkey"
   add_foreign_key "abstract_trip", "vehicle_category", column: "category_id", name: "abstract_trip_category_id_fkey"
+  add_foreign_key "invoices", "request", primary_key: "request_id", name: "invoice_request_id_fkey"
+  add_foreign_key "invoices", "schedule", primary_key: "schedule_id", name: "invoice_schedule_id_fkey"
+  add_foreign_key "invoices", "supplier", primary_key: "supplier_id", name: "invoice_supplier_id_fkey"
+  add_foreign_key "invoices", "vehicle", primary_key: "vehicle_id", name: "invoice_vehicle_id_fkey"
   add_foreign_key "request", "customer", primary_key: "customer_id", name: "request_cus_id_fkey"
   add_foreign_key "schedule", "request", primary_key: "request_id", name: "schedule_request_id_fkey"
   add_foreign_key "trip", "schedule", primary_key: "schedule_id", name: "trip_schedule_id_fkey"
   add_foreign_key "v_category_properties", "properties", primary_key: "property_id", name: "v_category_properties_property_id_fkey"
   add_foreign_key "v_category_properties", "vehicle_category", column: "category_id", name: "v_category_properties_v_category_id_fkey"
-  add_foreign_key "vehicle", "supplier", column: "s_id", primary_key: "s_id", name: "vehicle_s_id_fkey"
+  add_foreign_key "vehicle", "supplier", column: "s_id", primary_key: "supplier_id", name: "vehicle_s_id_fkey"
   add_foreign_key "vehicle", "vehicle_category", column: "category_id", name: "vehicle_category_id_fkey"
 end

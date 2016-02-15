@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "home" => "home#index"
+    post "checkaction" => "home#checkaction"
   end
 
   namespace :customer do
