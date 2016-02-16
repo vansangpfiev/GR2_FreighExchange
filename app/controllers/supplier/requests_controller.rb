@@ -30,7 +30,7 @@ class Supplier::RequestsController < Supplier::BaseController
 
   private
   def request_is_approved?
-    invoice = Invoice.find_by request_id: params[:id], supplier_id: current_user.id
+    invoice = Invoice.find_by request_id: params[:id], supplier_id: current_user.get_detailed_info.id
     if invoice.nil?
       @show_approve_form = true
     else

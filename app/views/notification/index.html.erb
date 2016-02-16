@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="row">
+    <h3>Message box</h3>
+  </div>
+  <div class="row container-fluid">
+    <div class="row">
+      <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Date create</th>        
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @messages.each do |message| %>
+      <tr>
+        <td><%= message.id %></td>
+        <td><%= message.created_at %></td>
+        <td><%= link_to message.message, notification_path(message) %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+    </div>
+  </div>
+</div>

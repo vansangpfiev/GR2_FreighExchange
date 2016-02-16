@@ -38,7 +38,6 @@ class Customer::RequestsController < Customer::BaseController
 
     @request.start_point = start_point.location_id if start_point != nil
     @request.end_point = end_point.location_id if end_point != nil
-    byebug
 
     #Estimate distance by google service
     distance = GoogleAPI.new().distanceEstimate(@request.start_point_lat,
@@ -59,6 +58,7 @@ class Customer::RequestsController < Customer::BaseController
           redirect_to customer_requests_path }
         format.json { render :show, status: :created, location: @request }
       else
+        #FIXME: If request is not validate flash error
         format.html { render :new }
         format.json { render json: @request.errors, status: :unprocessable_entity }
       end

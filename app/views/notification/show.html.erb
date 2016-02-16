@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="row">
+    <h3>Message box</h3>
+  </div>
+  <div class="row container-fluid">
+    <div class="row">
+    <div class="col-md-4">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date create</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @messages.each do |message| %>
+          <tr>
+            <td><%= message.id %></td>
+            <td><%= message.created_at %></td>
+            <td><%= link_to message.message, notification_path(message) %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-8 class="container-fluid" ">
+      <div class="row">
+        <h4>#<%= @current_message.id %></h4>
+        <h4>Level: <%= @current_message.level %></h4>
+      </div>
+      <div class="row">
+        <p>
+          <%= @current_message.message %>
+        </p>
+        <% if @current_message.targetable_type == "Request" %>
+          <%= link_to "show request", customer_request_path(Request.find_by_request_id @current_message.targetable_id) %>
+        <% end %>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

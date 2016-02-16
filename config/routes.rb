@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   get "dispatcher" => "request_dispatcher#main"
   get "error/index"
   get "application" => "request_dispatcher#app_dispatcher"
+  
+  resources :notification, only: [:index, :show]
 
   namespace :supplier do
   	get "profile" => "home#index"
