@@ -4,7 +4,9 @@ class NotificationController < ApplicationController
   def index   
   end
 
-  def show
-    @current_message = Notification.find_by_notification_id params[:id]
+  def show    
+    @current_message = current_user.notifications.find_by_notification_id params[:id]
+    @current_message.is_read = true
+    @current_message.save
   end
 end

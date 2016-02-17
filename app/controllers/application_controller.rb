@@ -19,6 +19,6 @@ def after_sign_in_path_for resource
 end
 
 def get_message
-  @messages = current_user.notifications.is_not_read
+  @messages = current_user.notifications.is_not_read if !current_user.nil?
 end
 end
