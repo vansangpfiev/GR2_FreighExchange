@@ -14,7 +14,9 @@
         <th>Date create</th>
         <th>From</th>
         <th>To</th>
+        <th>Routes</th>
         <th>Action</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
@@ -25,10 +27,15 @@
         <td><%= Location.find_by_location_id(request.start_point).address if !Location.find_by_location_id(request.start_point).nil? %></td>
         <td><%= Location.find_by_location_id(request.end_point).address if !Location.find_by_location_id(request.end_point).nil? %></td>
         <td>
+          <span><%= request.schedules.count() %></span>
+          <span><%= link_to "", customer_request_schedules_path(request), class: "glyphicon glyphicon-road" %></span>
+        </td>
+        <td>
           <%= link_to "", customer_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp          
           <%= link_to "", customer_request_path(request), method: :delete, class: "glyphicon glyphicon-trash", 
           :data => {confirm: "Delete this request, your action can not undo?"} %>
         </td>
+        <td></td>
       </tr>
       <% end %>
     </tbody>

@@ -1,0 +1,42 @@
+<div class="row">
+  <h3>Found <%= @request.schedules.count() %> routes for request #<%= @request.id %></h3>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <label>Order by:</label>
+  </div>
+  <div class="col-md-8">
+    <select name="order">
+      <option value="">Please select</option>
+      <option value="1" selected="selected">Best price</option>
+      <option value="2">Minimum transit station</option>
+      <option value="3">Time</option>
+    </select>
+  </div>
+</div>
+<div class="row">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Level</th>        
+        <th>Estimate time</th>
+        <th>Description</th>
+        <th>Action</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @schedules.each do |schedule| %>
+      <tr>
+        <td><%= schedule.id %></td>
+        <td><%= schedule.level %></td>
+        <td></td>
+        <td></td>
+        <td><button>Process to supplier</button></td>
+        <td></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

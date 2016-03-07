@@ -6,7 +6,8 @@ class DAL
 
   def self.containRouting start_lat, start_lon, end_lat, end_lon
     record_array = ActiveRecord::Base.connection.execute("select contain_routing(#{start_lat}, #{start_lon}, #{end_lat}, #{end_lon});")
-    return record_array
+    result = (record_array.values[0][0]).to_i
+    return result
   end
 
   def self.pgrDijkstraFromAtoB start_lat, start_lon, end_lat, end_lon

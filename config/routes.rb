@@ -25,6 +25,10 @@ Rails.application.routes.draw do
 
   namespace :customer do
     resources :requests
+    resources :requests do
+      resources :schedules, only: [:index]
+    end
     get "profile" => "profile#show"
+    get "tracking" => "tracking#index"
   end
 end
