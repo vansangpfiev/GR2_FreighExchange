@@ -6,6 +6,14 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
+<script type="text/javascript">
+  $(document).ready(
+   function() {
+    setInterval(function() {
+      $('.dynamic').load('/');
+    }, 3000);
+  });
+</script>
 <body>
   <!-- Navigation -->
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -22,43 +30,42 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">        
           <% if !@breadcrumb.nil? %>
-            <% @breadcrumb.each do |item| %>
-              <li><a><%= item %><span class="glyphicon glyphicon-menu-right"></span></a></li>
-            <% end %>
+          <% @breadcrumb.each do |item| %>
+          <li><a><%= item %><span class="glyphicon glyphicon-menu-right"></span></a></li>
+          <% end %>
           <% end %>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
           <% if user_signed_in? %>
-            <li><%= link_to gravatar_for(current_user, size: 24), root_path %></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-              aria-expanded="false">
-              Hi!&nbsp<%= current_user.email %>              
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Mail box (<%= @messages.count %>)</a></li>
-              <li><%= link_to "Logout", destroy_user_session_path, method: :delete %></li>
-              <li><%= link_to "Account setting", customer_profile_path %></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="#">Separated link</a></li>
-            </ul>
+          <li><%= link_to gravatar_for(current_user, size: 24), root_path %></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+            aria-expanded="false">
+            Hi!&nbsp<%= current_user.email %>              
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><%= link_to "Mail box (#{@messages.count()})", notification_index_path %></li>
+            <li><%= link_to "Logout", destroy_user_session_path, method: :delete %></li>
+            <li><%= link_to "Account setting", customer_profile_path %></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
           <% else %>
-            <li>
-              <%= link_to "Login", new_user_session_path %>
-            </li>
+          <li>
+            <%= link_to "Login", new_user_session_path %>
+          </li>
           <% end %>
-          <% if @messages.count != 0 %>          
-            <li>
-              <%= link_to image_tag("email-alert.png", id: "message-notification"), notification_index_path %>
-            </li>
+          <% if @messages.count != 0 %>
+          <li>
+            <%= link_to image_tag("email-alert.png", id: "message-notification"), notification_index_path %>
+          </li>
           <% end %>
         </ul>
       </div>    
     </div>
-  </nav>
-
+  </nav>  
   <div class="container" id="app-area">
     <div class="row">
       <% flash.each do |message_type, message|%>
@@ -69,7 +76,6 @@
     </div>
     <div class="row">
       <%= yield %>
-    </div>
-
-</body>
-</html>
+    </div>    
+  </body>
+  </html>

@@ -33,7 +33,7 @@
         <td><%= schedule.level %></td>
         <td></td>
         <td></td>
-        <td><button>Process to supplier</button></td>
+        <td><%= button_to "Process to supplier", customer_schedule_trips_path(schedule) %></td>
         <td></td>
       </tr>
       <% end %>

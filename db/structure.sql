@@ -37,6 +37,20 @@ CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
 
 
+--
+-- Name: pgrouting; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgrouting WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgrouting; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgrouting IS 'pgRouting Extension';
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -101,6 +115,44 @@ $$;
 
 
 --
+-- Name: contain_routing(double precision, double precision, double precision, double precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION contain_routing(start_lon double precision, start_lat double precision, end_lon double precision, end_lat double precision) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+declare 
+  num_of_node integer;
+  start_point geometry(Point,4269);
+  end_point geometry(Point,4269);
+  source_val integer;
+  target_val integer;
+begin
+  start_point = st_setsrid(st_makePoint(start_lon, start_lat), 4269);
+  end_point = st_setsrid(st_makePoint(end_lon, end_lat), 4269);
+  select point into start_point from location where st_dwithin(start_point::geography, point::geography, 100) limit 1;
+  select point into end_point from location where st_dwithin(end_point::geography, point::geography, 100) limit 1;
+
+  select source into source_val from ways where start_point = st_startpoint(the_geom);
+  select target into target_val from ways where end_point = st_endpoint(the_geom);
+
+  raise notice 'source_val(%)', source_val;
+  raise notice 'target_val(%)', target_val;
+
+  SELECT count(seq) into num_of_node FROM pgr_dijkstra('
+                SELECT abstract_trip_id AS id,
+                         source::integer,
+                         target::integer,
+                         length::double precision AS cost,
+                         reverse_cost::double precision AS reverse_cost
+                        FROM ways',
+                source_val, target_val, true, true);
+  return num_of_node;
+end
+$$;
+
+
+--
 -- Name: estimate_time(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -118,6 +170,161 @@ BEGIN
 	UPDATE schedule SET estimate_time = sum_time 
 	WHERE schedule_id = NEW.schedule_id;
 	RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: nearest_point(double precision, double precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION nearest_point(lat double precision, lon double precision) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+declare
+ input_point geometry(Point,4269);
+ results integer;
+begin
+ input_point = st_setsrid(st_makePoint(lon, lat), 4269);
+ select location_id into results from location
+  where st_dwithin(input_point::geography, point::geography, 100)
+  order by st_distance(input_point, point)  limit 1;
+ return results;
+end
+$$;
+
+
+--
+-- Name: pgr_dijkstra_fromatob(double precision, double precision, double precision, double precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION pgr_dijkstra_fromatob(x1 double precision, y1 double precision, x2 double precision, y2 double precision, OUT seq integer, OUT abstract_trip_id integer, OUT name text, OUT heading double precision, OUT cost double precision, OUT geom geometry) RETURNS SETOF record
+    LANGUAGE plpgsql STRICT
+    AS $$
+DECLARE
+        sql     text;
+        rec     record;
+        source_val	integer;
+        target_val	integer;
+        point	integer;
+        start_point record;
+        end_point record;        
+BEGIN
+	-- Find nearest node in line
+	EXECUTE 'SELECT point FROM location WHERE ST_DWithin(ST_GeometryFromText(''POINT(' 
+			|| x1 || ' ' || y1 || ')'',4326)::geography, point::geography, 100) LIMIT 1' INTO start_point;
+	SELECT source  into source_val FROM ways WHERE start_point.point = ST_Startpoint(the_geom);
+	
+	EXECUTE 'SELECT point FROM location WHERE ST_DWithin(ST_GeometryFromText(''POINT(' 
+			|| x2 || ' ' || y2 || ')'',4326)::geography, point::geography, 100) LIMIT 1' INTO end_point;
+	SELECT target into target_val FROM ways WHERE end_point.point = ST_EndPoint(the_geom);	
+
+	-- Shortest path query (TODO: limit extent by BBOX) 
+        seq := 0;
+        sql := 'SELECT abstract_trip_id, the_geom, name, cost, source, target, 
+				ST_Reverse(the_geom) AS flip_geom FROM ' ||
+                        'pgr_dijkstra(''SELECT abstract_trip_id as id, source::int, target::int, '
+                                        || 'length::float AS cost FROM ways'', '
+                                        || source_val || ', ' || target_val
+                                        || ' , false, false), ways WHERE id2 = abstract_trip_id ORDER BY seq';
+
+	-- Remember start point
+        point := source_val;
+
+        FOR rec IN EXECUTE sql
+        LOOP
+		-- Flip geometry (if required)
+		IF ( point != rec.source ) THEN
+			rec.the_geom := rec.flip_geom;
+			point := rec.source;
+		ELSE
+			point := rec.target;
+		END IF;
+
+		-- Calculate heading (simplified)
+		EXECUTE 'SELECT degrees( ST_Azimuth( 
+				ST_StartPoint(''' || rec.the_geom::text || '''),
+				ST_EndPoint(''' || rec.the_geom::text || ''') ) )' 
+			INTO heading;
+
+		-- Return record
+                seq              := seq + 1;
+                abstract_trip_id := rec.abstract_trip_id;
+                name             := rec.name;
+                cost             := rec.cost;
+                geom             := rec.the_geom;
+                RETURN NEXT;
+        END LOOP;
+        RETURN;
+END;
+$$;
+
+
+--
+-- Name: pgr_dijkstra_fromatob(character varying, double precision, double precision, double precision, double precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION pgr_dijkstra_fromatob(tbl character varying, x1 double precision, y1 double precision, x2 double precision, y2 double precision, OUT seq integer, OUT abstract_trip_id integer, OUT name text, OUT heading double precision, OUT cost double precision, OUT geom geometry, OUT geom_text text) RETURNS SETOF record
+    LANGUAGE plpgsql STRICT
+    AS $$
+DECLARE
+        sql     text;
+        rec     record;
+        source_val	integer;
+        target_val	integer;
+        point	integer;
+        start_point record;
+        end_point record;        
+BEGIN
+	-- Find nearest node in line
+	EXECUTE 'SELECT point FROM location WHERE ST_DWithin(ST_GeometryFromText(''POINT(' 
+			|| x1 || ' ' || y1 || ')'',4326)::geography, point::geography, 100) LIMIT 1' INTO start_point;
+	SELECT source  into source_val FROM ways WHERE start_point.point = ST_Startpoint(the_geom);
+	
+	EXECUTE 'SELECT point FROM location WHERE ST_DWithin(ST_GeometryFromText(''POINT(' 
+			|| x2 || ' ' || y2 || ')'',4326)::geography, point::geography, 100) LIMIT 1' INTO end_point;
+	SELECT target into target_val FROM ways WHERE end_point.point = ST_EndPoint(the_geom);	
+
+	-- Shortest path query (TODO: limit extent by BBOX) 
+        seq := 0;
+        sql := 'SELECT abstract_trip_id, the_geom, name, cost, source, target, 
+				ST_Reverse(the_geom) AS flip_geom FROM ' ||
+                        'pgr_dijkstra(''SELECT abstract_trip_id as id, source::int, target::int, '
+                                        || 'length::float AS cost FROM '
+                                        || quote_ident(tbl) || ''', '
+                                        || source_val || ', ' || target_val
+                                        || ' , false, false), '
+                                || quote_ident(tbl) || ' WHERE id2 = abstract_trip_id ORDER BY seq';
+
+	-- Remember start point
+        point := source_val;
+
+        FOR rec IN EXECUTE sql
+        LOOP
+		-- Flip geometry (if required)
+		IF ( point != rec.source ) THEN
+			rec.the_geom := rec.flip_geom;
+			point := rec.source;
+		ELSE
+			point := rec.target;
+		END IF;
+
+		-- Calculate heading (simplified)
+		EXECUTE 'SELECT degrees( ST_Azimuth( 
+				ST_StartPoint(''' || rec.the_geom::text || '''),
+				ST_EndPoint(''' || rec.the_geom::text || ''') ) )' 
+			INTO heading;
+
+		-- Return record
+                seq                  := seq + 1;
+                abstract_trip_id     := rec.abstract_trip_id;
+                name                 := rec.name;
+                cost                 := rec.cost;
+                geom                 := rec.the_geom;
+                geom_text            := st_astext(rec.the_geom);
+                RETURN NEXT;
+        END LOOP;
+        RETURN;
 END;
 $$;
 
@@ -265,6 +472,42 @@ ALTER SEQUENCE location_location_id_seq OWNED BY location.location_id;
 
 
 --
+-- Name: notifications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE notifications (
+    notification_id integer NOT NULL,
+    message character varying,
+    targetable_id bigint,
+    targetable_type character varying,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    user_id bigint,
+    level character varying(10),
+    is_read boolean
+);
+
+
+--
+-- Name: notifications_notification_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE notifications_notification_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: notifications_notification_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE notifications_notification_id_seq OWNED BY notifications.notification_id;
+
+
+--
 -- Name: properties; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -327,10 +570,33 @@ ALTER SEQUENCE request_request_id_seq OWNED BY request.request_id;
 --
 
 CREATE TABLE schedule (
+    request_id integer,
+    level character varying(15),
+    route geometry(MultiLineString,4269),
+    status character varying(15),
+    estimate_time integer,
     schedule_id integer NOT NULL,
-    estimate_time time without time zone,
-    request_id integer
+    abstract_trips text
 );
+
+
+--
+-- Name: schedule_schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE schedule_schedule_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: schedule_schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE schedule_schedule_id_seq OWNED BY schedule.schedule_id;
 
 
 --
@@ -529,6 +795,32 @@ ALTER SEQUENCE vehicle_id_seq OWNED BY vehicle.vehicle_id;
 
 
 --
+-- Name: ways; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE ways (
+    abstract_trip_id integer,
+    class_id integer NOT NULL,
+    length double precision,
+    name text,
+    x1 double precision,
+    y1 double precision,
+    x2 double precision,
+    y2 double precision,
+    reverse_cost double precision,
+    rule text,
+    to_cost double precision,
+    maxspeed_forward integer,
+    maxspeed_backward integer,
+    osm_id bigint,
+    priority double precision DEFAULT 1,
+    the_geom geometry(LineString,4269),
+    source integer,
+    target integer
+);
+
+
+--
 -- Name: ab_trip_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -557,10 +849,24 @@ ALTER TABLE ONLY location ALTER COLUMN location_id SET DEFAULT nextval('location
 
 
 --
+-- Name: notification_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY notifications ALTER COLUMN notification_id SET DEFAULT nextval('notifications_notification_id_seq'::regclass);
+
+
+--
 -- Name: request_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY request ALTER COLUMN request_id SET DEFAULT nextval('request_request_id_seq'::regclass);
+
+
+--
+-- Name: schedule_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY schedule ALTER COLUMN schedule_id SET DEFAULT nextval('schedule_schedule_id_seq'::regclass);
 
 
 --
@@ -628,6 +934,14 @@ ALTER TABLE ONLY invoices
 
 ALTER TABLE ONLY location
     ADD CONSTRAINT location_pkey PRIMARY KEY (location_id);
+
+
+--
+-- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY notifications
+    ADD CONSTRAINT notifications_pkey PRIMARY KEY (notification_id);
 
 
 --
@@ -711,6 +1025,13 @@ ALTER TABLE ONLY vehicle
 
 
 --
+-- Name: geom_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX geom_idx ON ways USING gist (the_geom);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -725,10 +1046,31 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
+-- Name: source_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX source_idx ON ways USING btree (source);
+
+
+--
+-- Name: target_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX target_idx ON ways USING btree (target);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: ways_gid_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX ways_gid_idx ON ways USING btree (abstract_trip_id);
 
 
 --
@@ -785,14 +1127,6 @@ ALTER TABLE ONLY invoices
 
 
 --
--- Name: invoice_schedule_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY invoices
-    ADD CONSTRAINT invoice_schedule_id_fkey FOREIGN KEY (schedule_id) REFERENCES schedule(schedule_id);
-
-
---
 -- Name: invoice_supplier_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -822,14 +1156,6 @@ ALTER TABLE ONLY request
 
 ALTER TABLE ONLY schedule
     ADD CONSTRAINT schedule_request_id_fkey FOREIGN KEY (request_id) REFERENCES request(request_id);
-
-
---
--- Name: trip_schedule_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY trip
-    ADD CONSTRAINT trip_schedule_id_fkey FOREIGN KEY (schedule_id) REFERENCES schedule(schedule_id);
 
 
 --

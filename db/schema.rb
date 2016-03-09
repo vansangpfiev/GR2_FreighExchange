@@ -49,6 +49,17 @@ ActiveRecord::Schema.define(version: 20151105025317) do
 # Could not dump table "location" because of following StandardError
 #   Unknown type 'geometry(Point,4269)' for column 'point'
 
+  create_table "notifications", primary_key: "notification_id", force: :cascade do |t|
+    t.string   "message"
+    t.integer  "targetable_id",   limit: 8
+    t.string   "targetable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id",         limit: 8
+    t.string   "level",           limit: 10
+    t.boolean  "is_read"
+  end
+
   create_table "properties", primary_key: "property_id", force: :cascade do |t|
     t.string "name", limit: 60
     t.string "unit", limit: 5
@@ -76,10 +87,8 @@ ActiveRecord::Schema.define(version: 20151105025317) do
     t.integer  "distance_estimate"
   end
 
-  create_table "schedule", primary_key: "schedule_id", force: :cascade do |t|
-    t.time    "estimate_time"
-    t.integer "request_id"
-  end
+# Could not dump table "schedule" because of following StandardError
+#   Unknown type 'geometry(MultiLineString,4269)' for column 'route'
 
   create_table "spatial_ref_sys", primary_key: "srid", force: :cascade do |t|
     t.string  "auth_name", limit: 256
@@ -96,12 +105,12 @@ ActiveRecord::Schema.define(version: 20151105025317) do
     t.integer "user_id"
   end
 
-  create_table "trip", id: false, force: :cascade do |t|
-    t.integer "trip_id",     limit: 8,  default: "nextval('trip_trip_id_seq'::regclass)", null: false
-    t.string  "vehicle_id",  limit: 30,                                                   null: false
-    t.integer "ab_trip_id",  limit: 8
-    t.integer "schedule_id"
-    t.integer "sequent",     limit: 2
+  create_table "trip", primary_key: "trip_id", force: :cascade do |t|
+    t.string   "vehicle_id",       limit: 30
+    t.integer  "abstract_trip_id", limit: 8
+    t.integer  "schedule_id"
+    t.integer  "sequent",          limit: 2
+    t.datetime "depature_time"
   end
 
   create_table "users", force: :cascade do |t|
@@ -148,12 +157,10 @@ ActiveRecord::Schema.define(version: 20151105025317) do
   add_foreign_key "abstract_trip", "location", column: "start_point", primary_key: "location_id", name: "abstract_trip_start_point_fkey"
   add_foreign_key "abstract_trip", "vehicle_category", column: "category_id", name: "abstract_trip_category_id_fkey"
   add_foreign_key "invoices", "request", primary_key: "request_id", name: "invoice_request_id_fkey"
-  add_foreign_key "invoices", "schedule", primary_key: "schedule_id", name: "invoice_schedule_id_fkey"
   add_foreign_key "invoices", "supplier", primary_key: "supplier_id", name: "invoice_supplier_id_fkey"
   add_foreign_key "invoices", "vehicle", primary_key: "vehicle_id", name: "invoice_vehicle_id_fkey"
   add_foreign_key "request", "customer", primary_key: "customer_id", name: "request_cus_id_fkey"
   add_foreign_key "schedule", "request", primary_key: "request_id", name: "schedule_request_id_fkey"
-  add_foreign_key "trip", "schedule", primary_key: "schedule_id", name: "trip_schedule_id_fkey"
   add_foreign_key "v_category_properties", "properties", primary_key: "property_id", name: "v_category_properties_property_id_fkey"
   add_foreign_key "v_category_properties", "vehicle_category", column: "category_id", name: "v_category_properties_v_category_id_fkey"
   add_foreign_key "vehicle", "supplier", column: "s_id", primary_key: "supplier_id", name: "vehicle_s_id_fkey"
