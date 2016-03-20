@@ -3,7 +3,67 @@
     $('#desiredate').datetimepicker();
   });
 </script>
-<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script>
+  $(function(){
+    $("#geocomplete").geocomplete({
+          map: ".map_canvas",
+          details: "form",
+          markerOptions: {
+            draggable: true
+          }
+    });
+
+    $("#geocomplete").bind("geocode:dragged", function(event, latLng){
+      $("input[name=lat]").val(latLng.lat());
+      $("input[name=lng]").val(latLng.lng());
+      $("#reset").show();
+    });    
+
+    $("#find").click(function(){
+      $("#geocomplete").trigger("geocode");
+    }).click();
+  });
+</script>
+<script type="text/javascript">
+  function changeCurrent(){
+    var startPointInput = document.getElementById('start-point-input');
+    var endPointInput = document.getElementById('end-point-input');
+    
+    var current_lng = document.getElementById('current-lng').value;
+    var current_lat = document.getElementById('current-lat').value;
+
+    var btnChange = document.getElementById('btn-change');
+
+    if (startPointInput.className == 'current-details') {
+      startPointInput.className = 'details';
+      endPointInput.className = 'current-details';
+
+      document.getElementById('request_start_point_long').value = current_lng;
+      document.getElementById('request_start_point_lat').value = current_lat;
+
+      btnChange.value = "Pick for destination"
+    }else{
+      startPointInput.className = 'current-details';
+      endPointInput.className = 'details';
+
+      document.getElementById('request_end_point_long').value = current_lng;
+      document.getElementById('request_end_point_lat').value = current_lat;
+
+      btnChange.value = "Pick for start"
+    }
+  }
+</script>
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+<style type="text/css">
+  .current-details {
+    border: dashed 1px red;
+  }
+  #auto-complete-form{
+    position: relative;
+    left: -760px;
+    top: 240px;
+  }
+</style>
 <%= form_for ([:customer, @request]) do |f| %>
 <% if @request.errors.any? %>
 <div id="error_explanation">
@@ -51,83 +111,68 @@
       </div>
     </div>
   </div>
-  <div class="row"><!-- Show address picker for start and end point-->
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Start location</th>
-          <th>End location</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <fieldset class="gllpLatlonPicker">
-              <input type="text" class="gllpSearchField">
-              <input type="button" class="gllpSearchButton" value="search">
-              <br/><br/>
-              <div class="gllpMap">Google Maps</div>
-              <br/>
-              From:(long/lat)
-              <%= f.text_field :start_point_long, class: "gllpLongitude", value: @request.start_point_long %> /
-              <%= f.text_field :start_point_lat, class: "gllpLatitude", value: @request.start_point_lat %>
-              zoom: <input type="text" class="gllpZoom" value="10"/>
-              <input type="button" class="gllpUpdateButton" value="update map">
-              <br/>
-            </fieldset>
-          </td>
-          <td>
-            <fieldset class="gllpLatlonPicker">
-              <input type="text" class="gllpSearchField">
-              <input type="button" class="gllpSearchButton" value="search">
-              <br/><br/>
-              <div class="gllpMap">Google Maps</div>
-              <br/>
-              Destination:(long/lat)
-              <%= f.text_field :end_point_long, class: "gllpLongitude", value: @request.end_point_long %>/
-              <%= f.text_field :end_point_lat, class: "gllpLatitude", value: @request.end_point_lat %>
-              zoom: <input type="text" class="gllpZoom" value="10"/>
-              <input type="button" class="gllpUpdateButton" value="update map">
-              <br/>
-            </fieldset>
-          </td>
-        </tr>
-      </tbody>
-    </table>  
-  </div>
-  <div class="row form-group">
-    <div class="col-md-4">
-      <%= f.label :time %><p><%= @request.time %></p>
-      <div class='input-group date' id='desiredate'>        
-        <%= f.datetime_field :time, class: "form-control" %>
-        <span class="input-group-addon">
-          <span class="glyphicon glyphicon-calendar"></span>
-        </span>
+  <div class="row" style="padding: 10px"><!-- Show address picker for start and end point-->
+    <div class="map_canvas col-md-8" style="min-height: 320px;"></div>
+    <div id="auto-complete-form">
+      <form>
+        <input id="geocomplete" type="text" placeholder="Type in an address" value="Ha Noi, Viet Nam" />
+        <input id="find" type="button" value="find" />
+        <fieldset>
+          <input id="current-lat" name="lat" type="hidden" value="">
+          <input id="current-lng" name="lng" type="hidden" value="">
+          <input name="formatted_address" type="hidden" value="">
+        </fieldset>      
+      </form>
+    </div>
+    <div class="col-md-4 container">      
+      <%= submit_tag "Pick for start", :type => 'button', :onclick => 'changeCurrent()', id: 'btn-change', class: 'row' %> 
+      <br/>
+      <br/>
+      <div id="start-point-input" class="current-details" style="padding: 5px">
+        From:(long/lat)
+        <%= f.text_field :start_point_long, class: "lng", value: @request.start_point_long %> /
+        <%= f.text_field :start_point_lat, class: "lat", value: @request.start_point_lat %>
+      </div>
+      <div id="end-point-input" class="details" style="padding: 5px">
+        Destination:(long/lat)
+        <%= f.text_field :end_point_long, class: "lng", value: @request.end_point_long %>/
+        <%= f.text_field :end_point_lat, class: "lat", value: @request.end_point_lat %>
       </div>
     </div>
-  </div>
-  <div class="row form-group">
-    <label class="col-md-1">Others</label>
-    <div class="col-md-4">      
-      <div class="col-md-6" >
-        <%= f.label :category_id %>
-        <% vehicle_category = VehicleCategory.all.map { |type| [type.name, type.id] } %>
-        <%= f.select :category_id, options_for_select(vehicle_category, @request.category_id), {}, {class: "form-control"} %>        
+    </div><!-- End location picker -->
+    <div class="row form-group">
+      <div class="col-md-4">
+        <%= f.label :time %><p><%= @request.time %></p>
+        <div class='input-group date' id='desiredate'>        
+          <%= f.datetime_field :time, class: "form-control" %>
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
       </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-md-1">Others</label>
+      <div class="col-md-4">      
+        <div class="col-md-6" >
+          <%= f.label :category_id %>
+          <% vehicle_category = VehicleCategory.all.map { |type| [type.name, type.id] } %>
+          <%= f.select :category_id, options_for_select(vehicle_category, @request.category_id), {}, {class: "form-control"} %>        
+        </div>
+        <div class="col-md-6">
+          <%= f.label :goods_type %>
+          <%= f.select :goods_type, options_for_select([['Frezee', 1], ['Madrid', 2]], 2), {}, {class: "form-control"} %>
+        </div>      
+      </div>
+    </div>
+    <div class="row form-group">
       <div class="col-md-6">
-        <%= f.label :goods_type %>
-        <%= f.select :goods_type, options_for_select([['Frezee', 1], ['Madrid', 2]], 2), {}, {class: "form-control"} %>
-      </div>      
+        <%= f.label "Description" %>
+        <%= f.text_area :other_description, size: "24x6", class: "form-control" %>
+      </div>
+    </div>
+    <div class="actions">
+      <%= f.submit "Create", class: "btn btn-default" %>
     </div>
   </div>
-  <div class="row form-group">
-    <div class="col-md-6">
-      <%= f.label "Description" %>
-      <%= f.text_area :other_description, size: "24x6", class: "form-control" %>
-    </div>
-  </div>
-  <div class="actions">
-    <%= f.submit "Create", class: "btn btn-default" %>
-  </div>
-</div>
-<% end %>
+  <% end %>

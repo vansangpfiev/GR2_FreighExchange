@@ -1,4 +1,67 @@
-<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+  function initMap() {
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+    var directionsService = new google.maps.DirectionsService;
+    var map = new google.maps.Map(document.getElementById('map-canvas'), {
+      zoom: 14,
+      center: {lat: 21.0226967, lng: 105.8369637}
+    });
+    directionsDisplay.setMap(map);
+    calculateAndDisplayRoute(directionsService, directionsDisplay);
+    document.getElementById('mode').addEventListener('change', function() {
+      calculateAndDisplayRoute(directionsService, directionsDisplay);
+    });
+  }
+
+  function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+    var selectedMode = document.getElementById('mode').value;
+
+    var startLat = document.getElementById('start-lat').value;
+    var startLng = document.getElementById('start-lng').value;
+    var endLat = document.getElementById('end-lat').value;
+    var endLng = document.getElementById('end-lng').value;
+
+    var start = new google.maps.LatLng(startLat, startLng);
+    var end = new google.maps.LatLng(endLat, endLng);
+
+    directionsService.route({
+          origin: start, 
+          destination: end,          
+          travelMode: google.maps.TravelMode[selectedMode]
+        }, function(response, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+  }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA10aWgd-daSGzR3ruieu5MgbGAxusiF90&callback=initMap">
+</script>
+<style type="text/css">
+  #map-canvas{
+    min-height: 400px;
+    margin-top: 10px;
+  }
+  #floating-panel {
+    position: absolute;
+    top: 35px;
+    left: 4%;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    text-align: center;
+    font-family: 'Roboto','sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
+  }
+  #estimate-way{
+    padding-top: 10px;
+  }
+</style>
 <div class="container-fluid">
   <div class="form-area">
     <div class="row container", style="background-color: #AAB3AB;">
@@ -19,50 +82,34 @@
           <%= @request.customer.tel %>
         </div>
       </div>
-    </div>    
-    <div class="row container">
+    </div>
+    <div class="row">
       <div class="col-md-4">
-        <h3>Location details</h3>
-        <div class="row"><!-- Show address picker for start and end point-->
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Start location</th>
-                <th>End location</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <fieldset class="gllpLatlonPicker">              
-                    <div class="gllpMap">Google Maps</div>
-                    <br/>
-                    From:(lat/long)
-                    <input class = "gllpLatitude", value = <%= @request.start_point_lat %> ></input>
-                    /
-                    <input class = "gllpLongitude", value = <%= @request.start_point_long %> ></input>
-                    <br/>
-                  </fieldset>
-                </td>
-                <td>
-                  <fieldset class="gllpLatlonPicker">              
-                    <div class="gllpMap">Google Maps</div>
-                    <br/>
-                    From:(lat/long)
-                    <input class = "gllpLatitude", value = <%= @request.end_point_lat %> ></input>
-                    /
-                    <input class = "gllpLongitude", value = <%= @request.end_point_long %> ></input>
-                    <br/>
-                  </fieldset>
-                </td>
-              </tr>
-            </tbody>
-          </table> 
-          <div id="estimate-way"> 
-            <label>About:&nbsp</label><%= @request.distance_estimate.nil? ? "Can not estimate " : @request.distance_estimate/1000 %>km&nbsp
-            <label>in&nbsp</label> some_values_goes_here hours
-          </div>
-        </div><!-- End show address picker for start and end point-->
+        <h3>Suggested route</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div id="map-canvas" ></div>
+      </div><!--End map region-->
+      <div class="col-md-4">
+        <div id="floating-panel">
+          <b>Mode of Travel: </b>
+          <select id="mode">
+            <option value="DRIVING">Driving</option>
+            <option value="WALKING">Walking</option>
+            <option value="BICYCLING">Bicycling</option>
+            <option value="TRANSIT">Transit</option>
+          </select>
+        </div>
+        <input id="start-lat" type="hidden" value = <%= @request.start_point_lat %> ></input>
+        <input id="start-lng" type="hidden" value = <%= @request.start_point_long %> ></input>
+        <input id="end-lat" type="hidden" value = <%= @request.end_point_lat %> ></input>
+        <input id="end-lng" type="hidden" value = <%= @request.end_point_long %> ></input>
+        <div id="estimate-way"> 
+          <label>About:&nbsp</label><%= @request.distance_estimate.nil? ? "Can not estimate " : @request.distance_estimate/1000 %>km&nbsp
+          <label>in&nbsp</label> some_values_goes_here hours
+        </div>
       </div>
     </div>
     <div class="row">
