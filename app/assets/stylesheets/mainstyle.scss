@@ -74,10 +74,47 @@
   color: #fafafa;
 }
 
-//Address picker > map
-.gllpMap  { width: 500px; height: 250px; }
-
 //Devise layout alert box
 #alert-box{
   margin-top: 70px;
+}
+//DataTable
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+  background-color: #e6EEEE;
+  border: 1px solid #FFF;
+  font-size: 8pt;
+  padding: 4px;
+}
+table.tablesorter thead tr .header {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  font-size: 14pt;
+  background-image: image-url("bg.gif");
+  background-repeat: no-repeat;
+  background-position: center right;
+  cursor: pointer;
+}
+table.tablesorter thead tr .headerSortUp {
+  background-image: image-url("asc.gif");
+}
+table.tablesorter thead tr .headerSortDown {
+  background-image: image-url("desc.gif");
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+  background-color: #8dbdd8;
+}
+.button-bar{
+  margin: 10px;
+}
+.table-name{
+  border-bottom: 1px #FFF solid;
+  background-color: #e6EEEE;
+  width: 20%;  
+  padding: 5px;
+  border-radius: 0px 35px 0px 0px;
+
+}
+.table-name span{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  font-size: 14pt;
+  padding-left: 20px;
 }

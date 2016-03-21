@@ -1,43 +1,50 @@
+<script type="text/javascript">
+  $(document).ready(function() { 
+    $("#data-table").tablesorter(); 
+  }); 
+</script>
 <div class="row">
-  <h3>View all requests</h3>
+  <div class="button-bar">
+    <%= button_to "New request", new_customer_request_path, method: :get, class: "btn btn-default"%>
+  </div>  
 </div>
-
 <div class="row">
-  <%= button_to "New request", new_customer_request_path, method: :get%>
-</div>
-
-<div class="row">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Date create</th>
-        <th>From</th>
-        <th>To</th>
-        <th>Routes</th>
-        <th>Action</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @requests.each do |request| %>
-      <tr>
-        <td><%= request.id %></td>
-        <td><%= request.created_at %></td>
-        <td><%= Location.find_by_location_id(request.start_point).address if !Location.find_by_location_id(request.start_point).nil? %></td>
-        <td><%= Location.find_by_location_id(request.end_point).address if !Location.find_by_location_id(request.end_point).nil? %></td>
-        <td>
-          <span><%= request.schedules.count() %></span>
-          <span><%= link_to "", customer_request_schedules_path(request), class: "glyphicon glyphicon-road" %></span>
-        </td>
-        <td>
-          <%= link_to "", customer_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp          
-          <%= link_to "", customer_request_path(request), method: :delete, class: "glyphicon glyphicon-trash", 
-          :data => {confirm: "Delete this request, your action can not undo?"} %>
-        </td>
-        <td></td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <div class="table-name">
+    <span>All requests</span>
+  </div>
+  <div class="table-content">
+    <table id="data-table" class="table table-striped tablesorter">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date create</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Routes</th>
+          <th>Action</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @requests.each do |request| %>
+        <tr>
+          <td><%= request.id %></td>
+          <td><%= request.created_at %></td>
+          <td><%= Location.find_by_location_id(request.start_point).address if !Location.find_by_location_id(request.start_point).nil? %></td>
+          <td><%= Location.find_by_location_id(request.end_point).address if !Location.find_by_location_id(request.end_point).nil? %></td>
+          <td>
+            <span><%= request.schedules.count() %></span>
+            <span><%= link_to "", customer_request_schedules_path(request), class: "glyphicon glyphicon-road" %></span>
+          </td>
+          <td>
+            <%= link_to "", customer_request_path(request), class: "glyphicon glyphicon-eye-open" %>&nbsp&nbsp          
+            <%= link_to "", customer_request_path(request), method: :delete, class: "glyphicon glyphicon-trash", 
+            :data => {confirm: "Delete this request, your action can not undo?"} %>
+          </td>
+          <td></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
