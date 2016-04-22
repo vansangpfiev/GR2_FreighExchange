@@ -13,7 +13,7 @@
           }
     });
 
-    $("#geocomplete").bind("geocode:dragged", function(event, latLng){
+    $("#geocomplete").bind("geocode:dragged", function(event, latLng){f
       $("input[name=lat]").val(latLng.lat());
       $("input[name=lng]").val(latLng.lng());
       $("#reset").show();
@@ -37,7 +37,7 @@
     if (startPointInput.className == 'current-details') {
       startPointInput.className = 'details';
       endPointInput.className = 'current-details';
-
+fff
       document.getElementById('request_start_point_long').value = current_lng;
       document.getElementById('request_start_point_lat').value = current_lat;
 
